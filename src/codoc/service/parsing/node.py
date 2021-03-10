@@ -10,6 +10,8 @@ from codoc.service.parsing.types import ObjectType
 
 logger = logging.getLogger(__name__)
 
+DEBUG_MODE = True
+
 
 def create_node_from_object(obj: ObjectType) -> Node:
     if obj is None:
@@ -17,7 +19,7 @@ def create_node_from_object(obj: ObjectType) -> Node:
     if is_an_instance(obj):
         raise ValueError()
     return Node(
-        identifier=get_identifier(obj),
+        identifier=get_identifier_of_object(obj),
         name=get_name(obj),
         description=get_description(obj),
         of_type=get_type(obj),
@@ -28,39 +30,22 @@ def create_node_from_object(obj: ObjectType) -> Node:
     )
 
 
-def get_parent_of_object(obj: ObjectType) -> Node:
-    return get_parent(obj)
-
-
-def get_identifier_of_object(obj: ObjectType) -> Node:
-    return get_identifier(obj)
-
-
-DEBUG_MODE = True
-
-
-class UnrecognizedTypeError(Exception):
-    def __init__(self, obj: object):
-        super().__init__(f"cannot deduce type of `{obj}`")
-
-
-class NameNotFound(Exception):
-    def __init__(self, obj: object):
-        super().__init__(f"cannot find the name of `{obj}` ({type(obj)})")
-
-
-def get_identifier(obj: ObjectType) -> str:
+def get_identifier_of_object(obj: ObjectType) -> str:
     """
     Returns the unique identifier of this object
     """
     # TODO maybe we can use base64 encryption to make it shorter.
     #   Not important tho.
     if DEBUG_MODE:
-        parent_name = getattr(get_parent(obj), "__name__", get_parent(obj))
+        parent_name = getattr(
+            get_parent_of_object(obj), "__name__", get_parent_of_object(obj)
+        )
         return f"{parent_name}.{get_name(obj)}{get_type(obj)}"
 
     hash_value = hex(
-        hash(hash(get_name(obj)) + hash(get_type(obj)) + hash(get_parent(obj)))
+        hash(
+            hash(get_name(obj)) + hash(get_type(obj)) + hash(get_parent_of_object(obj))
+        )
     )
     if hash_value[0] == "-":
         return "x" + hash_value[3:]
@@ -147,15 +132,15 @@ def get_type(obj: ObjectType) -> NodeType:
 
 
 def get_parent_identifier(obj: ObjectType) -> Optional[str]:
-    parent = get_parent(obj)
+    parent = get_parent_of_object(obj)
 
     if parent is None:
         return None
 
-    return get_identifier(parent)
+    return get_identifier_of_object(parent)
 
 
-def get_parent(obj: ObjectType) -> Optional[object]:
+def get_parent_of_object(obj: ObjectType) -> Optional[object]:
     if inspect.ismodule(obj):
         return _get_outer_module(obj)
     try:
@@ -181,3 +166,13 @@ def _get_outer_module(obj: ObjectType) -> Optional[object]:
     outer_module = importlib.import_module(outer_module_name)
 
     return outer_module
+
+
+class UnrecognizedTypeError(Exception):
+    def __init__(self, obj: object):
+        super().__init__(f"cannot deduce type of `{obj}`")
+
+
+class NameNotFound(Exception):
+    def __init__(self, obj: object):
+        super().__init__(f"cannot find the name of `{obj}` ({type(obj)})")

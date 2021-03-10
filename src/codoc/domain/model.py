@@ -47,8 +47,8 @@ class Node:
         if isinstance(other, Node):
             return (
                 self.name == other.name
-                and self.of_type == self.of_type
-                and self.parent_identifier == self.parent_identifier
+                and self.of_type == other.of_type
+                and self.parent_identifier == other.parent_identifier
             )
         return NotImplemented
 

@@ -26,85 +26,31 @@ class UnexpectedBuiltinError(Exception):
 def get_dependency_nodes(
     obj: ObjectType,
 ) -> FrozenSet[Node]:
-    return DependencyInspector(obj).get_dependency_nodes()
+    """
+    Returns all direct dependencies of the input object
+    """
+    return DependencyInspector(
+        obj, create_node_from_object, get_parent_of_object
+    ).get_dependency_nodes()
 
 
 def get_dependency_nodes_with_parents(
     obj: ObjectType,
 ) -> FrozenSet[Node]:
-    return DependencyInspector(obj).get_dependency_nodes_and_parents()
+    return DependencyInspector(
+        obj, create_node_from_object, get_parent_of_object
+    ).get_dependency_nodes_and_parents()
 
 
 def get_dependency_edges(
     obj: ObjectType,
-    node_creator_function: Optional[Callable[[ObjectType], Node]] = None,
 ) -> FrozenSet[Dependency]:
-    return DependencyInspector(obj).get_dependencies()
-
-    if is_builtin(obj):
-        raise UnexpectedBuiltinError()
-    # TODO maybe we should make it depend on the type then.
-    if is_an_instance(obj):
-        raise TypeError()
-
-    if not node_creator_function:
-        node_creator_function = create_node_from_object
-
-    initial_node = node_creator_function(obj)
-    module = get_module_of_object(obj)
-
-    identifiers_in_scope = get_identifier_names_in_scope()
-
-    return frozenset(
-        Dependency(from_node=initial_node.identifier, to_node=node.identifier)
-        for node in _get_dependency_nodes(
-            node=node, node_creator_function=node_creator_function
-        )
-    )
-
-
-def get_module_of_object(obj: ObjectType):
-    return inspect.getmodule(self._obj)
-
-
-def _get_dependency_nodes(
-    node: Node, node_creator_function: Callable[[ObjectType], Node]
-) -> Iterable[Node]:
-    return (
-        node_creator_function(obj)
-        for obj in get_dependency_objects(node)
-        if obj is not None and is_not_an_instance(obj)
-    )
-
-
-def get_dependency_objects(node: Node) -> Iterable[ObjectType]:
     """
-    Returns objects that our object depends on
+    Returns the edges that reflect the dependencies of the input object
     """
-    return (
-        self.get_object_from_module(identifier)
-        for identifier in get_referenced_identifier_names(node)
-        if identifier not in ["None"]
-    )
-
-
-def get_referenced_identifier_names(self, node: Node) -> Set[str]:
-    try:
-        return get_referenced_identifier_names_via_regex() - {
-            node.name,
-            str(True),
-            str(False),
-        }
-    except SourceNotFoundError:
-        return {}
-
-
-def get_referenced_identifier_names_via_regex(obj: ObjectType, node: Node) -> Set[str]:
-    return RegexIdentifierExtractor(
-        obj,
-        node,
-        get_identifier_names_in_scope(),
-    ).get_identifiers()
+    return DependencyInspector(
+        obj, create_node_from_object, get_parent_of_object
+    ).get_dependencies()
 
 
 class DependencyInspector:
@@ -112,7 +58,12 @@ class DependencyInspector:
     Extracts dependencies from a given class or function
     """
 
-    def __init__(self, obj: ObjectType):
+    def __init__(
+        self,
+        obj: ObjectType,
+        node_creator_function: Callable[[ObjectType], Node],
+        get_parent_function: Callable[[ObjectType], Node],
+    ):
         if is_builtin(obj):
             raise UnexpectedBuiltinError()
         # TODO maybe we should make it depend on the type then.
@@ -120,7 +71,9 @@ class DependencyInspector:
             raise TypeError()
 
         self._obj = obj
-        self._node = create_node_from_object(obj)
+        self.create_node = node_creator_function
+        self.get_parent = get_parent_function
+        self._node = node_creator_function(obj)
         self._module = inspect.getmodule(self._obj)
 
     def get_dependencies(self) -> FrozenSet[Dependency]:
@@ -135,16 +88,16 @@ class DependencyInspector:
         parents of each dependency
         """
         return frozenset(
-            create_node_from_object(obj)
+            self.create_node(obj)
             for dependency in self.get_dependency_objects()
             if dependency is not None and is_not_an_instance(dependency)
-            for obj in recursively_get_parents(dependency) | {dependency}
+            for obj in self.recursively_get_parents(dependency) | {dependency}
             if obj is not None
         )
 
     def get_dependency_nodes(self) -> Iterable[Node]:
         return (
-            create_node_from_object(obj)
+            self.create_node(obj)
             for obj in self.get_dependency_objects()
             if obj is not None and is_not_an_instance(obj)
         )
@@ -199,9 +152,6 @@ class DependencyInspector:
             for idx2 in self.get_identifier_names_in_scope()
         )
 
-    def get_all_used_identifiers_via_ast(self) -> Set[str]:
-        return ASTIdentifierExtractor(self._obj).get_identifiers()
-
     @lru_cache(maxsize=None)
     def get_identifier_names_in_scope(self) -> Set[str]:
         return set(name for name, value in self.get_identifiers_in_scope())
@@ -209,13 +159,12 @@ class DependencyInspector:
     def get_identifiers_in_scope(self) -> List[Tuple[str, Type]]:
         return inspect.getmembers(self._module) + inspect.getmembers(builtins)
 
-
-def recursively_get_parents(obj: object) -> Set[ObjectType]:
-    parent = get_parent_of_object(obj)
-    if parent is None:
-        return set()
-    else:
-        return {parent} | recursively_get_parents(parent)
+    def recursively_get_parents(self, obj: ObjectType) -> Set[ObjectType]:
+        parent = self.get_parent(obj)
+        if parent is None:
+            return set()
+        else:
+            return {parent} | self.recursively_get_parents(parent)
 
 
 def _recursively_get_member_in_object_matching_identifier_name(
