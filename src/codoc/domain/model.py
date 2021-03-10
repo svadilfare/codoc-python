@@ -38,9 +38,6 @@ class Node:
 
         return f"[Node: {self.name} - {self.of_type} ({self.identifier})]"
 
-    def __repr__(self) -> str:
-        return self.__str__()
-
     def __hash__(self) -> int:
         return hash(self.identifier)
 

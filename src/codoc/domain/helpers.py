@@ -26,7 +26,7 @@ def get_node(identifier: str, graph: Graph) -> Node:
         raise NodeIdentifierNotFoundException(identifier, graph)
 
 
-def has_children(identifier: str, graph: Graph) -> Node:
+def has_children(identifier: str, graph: Graph) -> bool:
     return any(node.parent_identifier == identifier for node in graph.nodes)
 
 
