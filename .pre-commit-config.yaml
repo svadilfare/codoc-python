@@ -1,0 +1,30 @@
+repos:
+  - repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v1.2.3
+    hooks:
+      - id: check-merge-conflict
+  - repo: https://github.com/ambv/black
+    rev: 'd7891b9'
+    hooks:
+      - id: black
+        language_version: python3.9
+  - repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v1.2.3
+    hooks:
+      - id: trailing-whitespace
+        files: "\\.(py|css|less|scss|graphql|gql|js|jsx|json|md|markdown|mdown|mkdn|mdx|ts|tsx|vue|yaml|yml)$"
+      - id: check-json
+        files: "\\.json$"
+      - id: end-of-file-fixer
+      - id: debug-statements
+      - id: check-ast
+      - id: mixed-line-ending
+      - id: requirements-txt-fixer
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: '6de8252c'
+    hooks:
+      - id: flake8
+        args:
+          - --max-line-length=101
+          - --exclude=*/migrations/*,docs/*,*/snapshots/*
+          - --ignore=E126,W503
