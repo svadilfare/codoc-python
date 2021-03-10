@@ -137,7 +137,7 @@ class DependencyInspector:
                 str(False),
             }
         except SourceNotFoundError:
-            return {}
+            return set()
 
     def get_referenced_identifier_names_via_regex(self) -> Set[str]:
         return RegexIdentifierExtractor(
