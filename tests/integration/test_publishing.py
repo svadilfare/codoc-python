@@ -22,6 +22,6 @@ def api_key():
 def generic_graph(create_graph, create_node, create_edge):
     nodeA = create_node(identifier="A")
     nodeB = create_node(identifier="B")
-    edge = create_edge(from_node_id="A", to_node_id="B")
+    edge = create_edge(from_node=nodeA, to_node_id=nodeB)
 
     return create_graph(nodes=[nodeA, nodeB], edges=[edge])

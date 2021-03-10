@@ -14,9 +14,9 @@ class ParentNotFoundException(Exception):
 
 class NodeIdentifierNotFoundException(Exception):
     def __init__(self, identifier: str, graph: Graph):
-        super().__init__(
-            f"Could not find identifier '{identifier}'\n All identifiers: {[n.identifier for n in graph.nodes]}"
-        )
+        all_identifiers = [n.identifier for n in graph.nodes]
+        msg = f"Could not find identifier '{identifier}'\n {all_identifiers=}"
+        super().__init__(msg)
 
 
 def get_node(identifier: str, graph: Graph) -> Node:
@@ -24,6 +24,19 @@ def get_node(identifier: str, graph: Graph) -> Node:
         return next(node for node in graph.nodes if node.identifier == identifier)
     except StopIteration:
         raise NodeIdentifierNotFoundException(identifier, graph)
+
+
+def contains_node(identifier: str, graph: Graph) -> bool:
+    return any(node.identifier == identifier for node in graph.nodes)
+
+
+def contains_dependency_between(
+    identifier_from: str, identifier_to: str, graph: Graph
+) -> bool:
+    return any(
+        edge.from_node == identifier_from and edge.to_node == identifier_to
+        for edge in graph.edges
+    )
 
 
 def has_children(identifier: str, graph: Graph) -> bool:

@@ -17,8 +17,8 @@ def create_graph():
 
 @pytest.fixture
 def create_edge():
-    def _func(from_node_id, to_node_id):
-        return Dependency(from_node=from_node_id, to_node=to_node_id)
+    def _func(from_node: Node, to_node: Node):
+        return Dependency(from_node=from_node.identifier, to_node=to_node.identifier)
 
     return _func
 
