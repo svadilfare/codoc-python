@@ -25,7 +25,8 @@ jobs:
           CI: true
       - name: Run Tests
         run: |
-          pytest . --cov=src/ --flake8 --black --mypy
+          #pytest . --cov=src/ --flake8 --black --mypy
+          pytest . --cov=src/
           coverage xml -o coverage.xml
           coverage html
       - name: SonarCloud Scan
