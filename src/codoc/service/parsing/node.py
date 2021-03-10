@@ -12,15 +12,28 @@ logger = logging.getLogger(__name__)
 
 
 def create_node_from_object(obj: ObjectType) -> Node:
-    return NodeGenerator(obj).generate()
+    if obj is None:
+        raise ValueError()
+    if is_an_instance(obj):
+        raise ValueError()
+    return Node(
+        identifier=get_identifier(obj),
+        name=get_name(obj),
+        description=get_description(obj),
+        of_type=get_type(obj),
+        parent_identifier=get_parent_identifier(obj),
+        path=get_path(obj),
+        args=get_args(obj),
+        lines=get_lines(obj),
+    )
 
 
 def get_parent_of_object(obj: ObjectType) -> Node:
-    return NodeGenerator(obj).get_parent()
+    return get_parent(obj)
 
 
 def get_identifier_of_object(obj: ObjectType) -> Node:
-    return NodeGenerator(obj).get_identifier()
+    return get_identifier(obj)
 
 
 DEBUG_MODE = True
@@ -36,155 +49,135 @@ class NameNotFound(Exception):
         super().__init__(f"cannot find the name of `{obj}` ({type(obj)})")
 
 
-# TODO make into functions
-class NodeGenerator:
+def get_identifier(obj: ObjectType) -> str:
     """
-    NodeGenerator used to extract relevant data from a given class-type.
+    Returns the unique identifier of this object
     """
+    # TODO maybe we can use base64 encryption to make it shorter.
+    #   Not important tho.
+    if DEBUG_MODE:
+        parent_name = getattr(get_parent(obj), "__name__", get_parent(obj))
+        return f"{parent_name}.{get_name(obj)}{get_type(obj)}"
 
-    def __init__(self, obj: object):
-        if obj is None:
-            raise ValueError()
-        if is_an_instance(obj):
-            raise ValueError()
-        self._obj = obj
+    hash_value = hex(
+        hash(hash(get_name(obj)) + hash(get_type(obj)) + hash(get_parent(obj)))
+    )
+    if hash_value[0] == "-":
+        return "x" + hash_value[3:]
 
-    def generate(self) -> Node:
-        return Node(
-            identifier=self.get_identifier(),
-            name=self._get_name(),
-            description=self._get_description(),
-            of_type=self._get_type(),
-            parent_identifier=self._get_parent_identifier(),
-            path=self._get_path(),
-            args=self._get_args(),
-            lines=self._get_lines(),
-        )
+    return hash_value[2:]
 
-    def get_identifier(self) -> str:
-        """
-        Returns the unique identifier of this object
-        """
-        # TODO maybe we can use base64 encryption to make it shorter.
-        #   Not important tho.
-        if DEBUG_MODE:
-            parent_name = getattr(self.get_parent(), "__name__", self.get_parent())
-            return f"{parent_name}.{self._get_name()}{self._get_type()}"
 
-        hash_value = hex(
-            hash(
-                hash(self._get_name())
-                + hash(self._get_type())
-                + hash(self.get_parent())
-            )
-        )
-        if hash_value[0] == "-":
-            return "x" + hash_value[3:]
+def get_description(obj: ObjectType) -> str:
+    return inspect.getdoc(obj) or ""
 
-        return hash_value[2:]
 
-    def _get_description(self) -> str:
-        return inspect.getdoc(self._obj) or ""
-
-    def _get_args(self) -> Optional[Tuple[str, ...]]:
-        try:
-            return tuple(inspect.getfullargspec(self._obj).args)
-        except TypeError:
-            return None
-
-    def _get_path(self) -> Optional[str]:
+def get_args(obj: ObjectType) -> Optional[Tuple[str, ...]]:
+    try:
+        return tuple(inspect.getfullargspec(obj).args)
+    except TypeError:
         return None
-        # TODO reenable when we get a relative path, not including home etc.
-        # TODO or simply use another node_creator when running tests
-        try:
-            return inspect.getfile(self._obj)
-        except TypeError:
-            return None
 
-    def _get_lines(self) -> Optional[Tuple[int, int]]:
+
+def get_path(obj: ObjectType) -> Optional[str]:
+    return None
+    # TODO reenable when we get a relative path, not including home etc.
+    # TODO or simply use another node_creator when running tests
+    try:
+        return inspect.getfile(obj)
+    except TypeError:
         return None
-        # TODO reenable when we get a relative path, not including home etc.
-        # TODO or simply use another node_creator when running tests
-        try:
-            file_name = inspect.getfile(self._obj)
-        except TypeError:
-            return None
-        try:
-            with open(file_name) as f:
-                content = f.read()
-                try:
-                    source = inspect.getsource(self._obj)
-                except OSError:
-                    return None
-                start = len(content.split(source)[0].split("\n"))
-                end = start + len(source.split("\n")) - 1
-                return (start, end)
-        except (FileNotFoundError, UnicodeDecodeError):
-            return None
 
-    def _get_name(self) -> str:
+
+def get_lines(obj: ObjectType) -> Optional[Tuple[int, int]]:
+    return None
+    # TODO reenable when we get a relative path, not including home etc.
+    # TODO or simply use another node_creator when running tests
+    try:
+        file_name = inspect.getfile(obj)
+    except TypeError:
+        return None
+    try:
+        with open(file_name) as f:
+            content = f.read()
+            try:
+                source = inspect.getsource(obj)
+            except OSError:
+                return None
+            start = len(content.split(source)[0].split("\n"))
+            end = start + len(source.split("\n")) - 1
+            return (start, end)
+    except (FileNotFoundError, UnicodeDecodeError):
+        return None
+
+
+def get_name(obj: ObjectType) -> str:
+    try:
+        return obj.__name__
+    except AttributeError:
         try:
-            return self._obj.__name__
+            return obj._name
         except AttributeError:
             try:
-                return self._obj._name
+                return obj.name
             except AttributeError:
-                try:
-                    return self._obj.name
-                except AttributeError:
-                    raise NameNotFound(self._obj)
+                raise NameNotFound(obj)
 
-    def _get_type(self) -> NodeType:
 
-        # Some of the elements in `typing` are actually a str
-        # so we have to check for this first
-        # however some of the elements in `types` are also classes
-        # so we need to check for types first
-        if self._obj is str:
-            return NodeType.CLASS
+def get_type(obj: ObjectType) -> NodeType:
 
-        if inspect.isclass(self._obj):
-            return NodeType.CLASS
-        if getattr(self._obj, "__module__", "").startswith("typing"):
-            return NodeType.CLASS
-        if callable(self._obj):
-            return NodeType.FUNCTION
-        if inspect.ismodule(self._obj):
-            return NodeType.MODULE
-
-        # TODO find out if we can make this assumption
+    # Some of the elements in `typing` are actually a str
+    # so we have to check for this first
+    # however some of the elements in `types` are also classes
+    # so we need to check for types first
+    if obj is str:
         return NodeType.CLASS
-        # raise UnrecognizedTypeError(self._obj)
 
-    def _get_parent_identifier(self) -> Optional[str]:
-        parent = self.get_parent()
+    if inspect.isclass(obj):
+        return NodeType.CLASS
+    if getattr(obj, "__module__", "").startswith("typing"):
+        return NodeType.CLASS
+    if callable(obj):
+        return NodeType.FUNCTION
+    if inspect.ismodule(obj):
+        return NodeType.MODULE
 
-        if parent is None:
-            return None
+    # TODO find out if we can make this assumption
+    return NodeType.CLASS
 
-        return NodeGenerator(parent).get_identifier()
 
-    def get_parent(self) -> Optional[object]:
-        if inspect.ismodule(self._obj):
-            return self._get_outer_module()
-        try:
-            return self._obj.__parentclass__
-        except AttributeError:
-            pass
-        try:
-            return inspect.getmodule(self._obj)
-        except AttributeError:
-            return None
+def get_parent_identifier(obj: ObjectType) -> Optional[str]:
+    parent = get_parent(obj)
 
-    # TODO test this function
+    if parent is None:
+        return None
 
-    def _get_outer_module(self) -> Optional[object]:
-        """
-        If the current item is a module, then it tries to get the outer module
-        """
-        outer_module_name = ".".join(self._get_name().split(".")[:-1])
-        if outer_module_name == "":
-            return None
-        outer_module = importlib.import_module(outer_module_name)
+    return get_identifier(parent)
 
-        return outer_module
+
+def get_parent(obj: ObjectType) -> Optional[object]:
+    if inspect.ismodule(obj):
+        return _get_outer_module(obj)
+    try:
+        return obj.__parentclass__
+    except AttributeError:
+        pass
+    try:
+        return inspect.getmodule(obj)
+    except AttributeError:
+        return None
+
+
+# TODO test this function
+
+
+def _get_outer_module(obj: ObjectType) -> Optional[object]:
+    """
+    If the current item is a module, then it tries to get the outer module
+    """
+    outer_module_name = ".".join(get_name(obj).split(".")[:-1])
+    if outer_module_name == "":
+        return None
+    outer_module = importlib.import_module(outer_module_name)
+
+    return outer_module
