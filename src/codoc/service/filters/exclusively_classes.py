@@ -12,15 +12,17 @@ def include_only_classes(graph: Graph) -> Graph:
             if edge_is_attached_only_to_classes(edge, graph)
         ),
         nodes=set(
-            node_without_non_class_parent(node, graph)
+            node_with_non_class_parent(node, graph)
             for node in graph.nodes
             if is_class(node)
         ),
     )
 
 
-def node_without_non_class_parent(node: Node, graph) -> Node:
-    if node.parent_identifier and identifier_is_class(node.parent_identifier, graph):
+def node_with_non_class_parent(node: Node, graph) -> Node:
+    if node.parent_identifier and not identifier_is_class(
+        node.parent_identifier, graph
+    ):
         return node_without_parent(node)
     return node
 
