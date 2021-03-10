@@ -28,7 +28,7 @@ from codoc import create_graph_from_module, publish
 from codoc.filters import filter_only_classes
 import my_package
 
-graph =create_graph_from_module(my_package)
+graph = create_graph_from_module(my_package)
 
 class_diagram = filter_only_classes(graph)
 

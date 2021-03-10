@@ -93,6 +93,9 @@ class NodeGenerator:
             return None
 
     def _get_path(self) -> Optional[str]:
+        return None
+        # TODO reenable when we get a relative path, not including home etc.
+        # TODO or simply use another node_creator when running tests
         try:
             return inspect.getfile(self._obj)
         except TypeError:
