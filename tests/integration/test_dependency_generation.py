@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pytest
 
+from codoc.service.parsing.node import get_identifier_of_object
 from codoc.service.parsing.dependency import (
     get_dependency_edges,
     get_dependency_nodes_with_parents,
@@ -8,47 +9,33 @@ from codoc.service.parsing.dependency import (
 )
 
 
-class TestGetDependencyEdges:
-    def test_class_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_edges(examples.Animal))
-
-    def test_function_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_edges(examples.random_function))
-
-    def test_module_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_edges(examples))
-
-    def test_dogfood_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_edges(get_dependency_edges))
+def test_get_dependency_edges_match_snapshot(examples, snapshot, kwargs):
+    snapshot.assert_match(get_dependency_edges(**kwargs))
 
 
-class TestGetDependencyNodesAndParents:
-    def test_class_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes_with_parents(examples.Animal))
-
-    def test_function_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(
-            get_dependency_nodes_with_parents(examples.random_function)
-        )
-
-    def test_module_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes_with_parents(examples))
-
-    def test_dogfood_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(
-            get_dependency_nodes_with_parents(get_dependency_nodes_with_parents)
-        )
+def test_get_dependency_nodes_with_parents_match_snapshot(examples, snapshot, kwargs):
+    snapshot.assert_match(get_dependency_nodes_with_parents(**kwargs))
 
 
-class TestGetDependencyNodes:
-    def test_class_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes(examples.Animal))
+def test_get_dependency_nodes_match_snapshot(examples, snapshot, kwargs):
+    snapshot.assert_match(get_dependency_nodes(**kwargs))
 
-    def test_function_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes(examples.random_function))
 
-    def test_module_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes(examples))
+@pytest.fixture()
+def kwargs(obj, create_node):
+    return {
+        "obj": obj,
+        "create_node": lambda obj: create_node(
+            identifier=get_identifier_of_object(obj)
+        ),
+    }
 
-    def test_dogfood_match_snapshot(self, examples, snapshot):
-        snapshot.assert_match(get_dependency_nodes(get_dependency_nodes))
+
+@pytest.fixture(params=(1, 2, 3), ids=["Class", "Function", "Module"])
+def obj(request, examples):
+    if request.param == 1:
+        return examples.Animal
+    if request.param == 2:
+        return examples.random_function
+    if request.param == 3:
+        return examples

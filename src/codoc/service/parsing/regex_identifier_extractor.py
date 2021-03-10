@@ -64,7 +64,10 @@ class RegexIdentifierExtractor(IdentifierExtractor):
 
 # TODO test
 def remove_definitions(code: str, obj_name: str) -> str:
-    return re.sub(re.compile(f"^(def|class)[ ]+{obj_name}"), "", code)
+    try:
+        return re.sub(re.compile(f"^(def|class)[ ]+{obj_name}"), "", code)
+    except re.error as e:
+        raise Exception(f"Could not remove def from {obj_name}") from e
 
 
 def remove_comments_and_strings(code: str) -> str:

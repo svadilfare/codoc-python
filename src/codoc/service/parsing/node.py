@@ -34,23 +34,12 @@ def get_identifier_of_object(obj: ObjectType) -> str:
     """
     Returns the unique identifier of this object
     """
-    # TODO maybe we can use base64 encryption to make it shorter.
-    #   Not important tho.
-    if DEBUG_MODE:
-        parent_name = getattr(
-            get_parent_of_object(obj), "__name__", get_parent_of_object(obj)
-        )
-        return f"{parent_name}.{get_name(obj)}{get_type(obj)}"
-
-    hash_value = hex(
-        hash(
-            hash(get_name(obj)) + hash(get_type(obj)) + hash(get_parent_of_object(obj))
-        )
-    )
-    if hash_value[0] == "-":
-        return "x" + hash_value[3:]
-
-    return hash_value[2:]
+    parent = get_parent_of_object(obj)
+    if parent:
+        parent_name = get_name(parent)
+    else:
+        parent_name = ""
+    return f"{parent_name}/{get_name(obj)}/{get_type(obj)}"
 
 
 def get_description(obj: ObjectType) -> str:
@@ -97,6 +86,14 @@ def get_lines(obj: ObjectType) -> Optional[Tuple[int, int]]:
 
 
 def get_name(obj: ObjectType) -> str:
+    """
+    Returns the human readable name of the object.
+
+    This is often just the name of the object, i.e in this
+    method it would be `get_name`.
+    However on typing etc, they don't have a name in the
+    same way, so there it will be a bit more tailored.
+    """
     try:
         return obj.__name__
     except AttributeError:
@@ -140,7 +137,7 @@ def get_parent_identifier(obj: ObjectType) -> Optional[str]:
     return get_identifier_of_object(parent)
 
 
-def get_parent_of_object(obj: ObjectType) -> Optional[object]:
+def get_parent_of_object(obj: ObjectType) -> Optional[ObjectType]:
     if inspect.ismodule(obj):
         return _get_outer_module(obj)
     try:
@@ -151,9 +148,6 @@ def get_parent_of_object(obj: ObjectType) -> Optional[object]:
         return inspect.getmodule(obj)
     except AttributeError:
         return None
-
-
-# TODO test this function
 
 
 def _get_outer_module(obj: ObjectType) -> Optional[object]:

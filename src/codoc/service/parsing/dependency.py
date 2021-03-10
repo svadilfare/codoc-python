@@ -25,32 +25,44 @@ class UnexpectedBuiltinError(Exception):
 
 def get_dependency_nodes(
     obj: ObjectType,
+    **kwargs,
 ) -> FrozenSet[Node]:
     """
     Returns all direct dependencies of the input object
     """
+    kwargs = bootstrap_kwargs(kwargs)
     return DependencyInspector(
-        obj, create_node_from_object, get_parent_of_object
+        obj, create_node=create_node_from_object, get_parent=get_parent_of_object
     ).get_dependency_nodes()
 
 
 def get_dependency_nodes_with_parents(
     obj: ObjectType,
+    **kwargs,
 ) -> FrozenSet[Node]:
-    return DependencyInspector(
-        obj, create_node_from_object, get_parent_of_object
-    ).get_dependency_nodes_and_parents()
+    """
+    Returns all direct dependencies of the input object
+    and the parents of those dependencies
+    """
+    kwargs = bootstrap_kwargs(kwargs)
+    return DependencyInspector(obj, **kwargs).get_dependency_nodes_and_parents()
 
 
 def get_dependency_edges(
     obj: ObjectType,
+    **kwargs,
 ) -> FrozenSet[Dependency]:
     """
     Returns the edges that reflect the dependencies of the input object
     """
-    return DependencyInspector(
-        obj, create_node_from_object, get_parent_of_object
-    ).get_dependencies()
+    kwargs = bootstrap_kwargs(kwargs)
+    return DependencyInspector(obj, **kwargs).get_dependencies()
+
+
+def bootstrap_kwargs(kwargs):
+    kwargs.setdefault("create_node", create_node_from_object)
+    kwargs.setdefault("get_parent", get_parent_of_object)
+    return kwargs
 
 
 class DependencyInspector:
@@ -61,8 +73,8 @@ class DependencyInspector:
     def __init__(
         self,
         obj: ObjectType,
-        node_creator_function: Callable[[ObjectType], Node],
-        get_parent_function: Callable[[ObjectType], Node],
+        create_node: Callable[[ObjectType], Node],
+        get_parent: Callable[[ObjectType], ObjectType],
     ):
         if is_builtin(obj):
             raise UnexpectedBuiltinError()
@@ -71,9 +83,9 @@ class DependencyInspector:
             raise TypeError()
 
         self._obj = obj
-        self.create_node = node_creator_function
-        self.get_parent = get_parent_function
-        self._node = node_creator_function(obj)
+        self.create_node = create_node
+        self.get_parent = get_parent
+        self._node = create_node(obj)
         self._module = inspect.getmodule(self._obj)
 
     def get_dependencies(self) -> FrozenSet[Dependency]:
@@ -142,7 +154,7 @@ class DependencyInspector:
     def get_referenced_identifier_names_via_regex(self) -> Set[str]:
         return RegexIdentifierExtractor(
             self._obj,
-            self._node,
+            self._node.name,
             self.get_identifier_names_in_scope(),
         ).get_identifiers()
 
