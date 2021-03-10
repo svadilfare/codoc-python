@@ -4,11 +4,13 @@ import pytest
 # from codoc.service_layer.publishing import GraphPublisher
 
 
+@pytest.mark.skip("Not implemented")
 def test_can_publish_graph(generic_graph, api_key):
+    ...
 
-    publisher = GraphPublisher(api_key)
+    # publisher = GraphPublisher(api_key)
 
-    publisher.publish(generic_graph)
+    # publisher.publish(generic_graph)
 
 
 @pytest.fixture

@@ -102,6 +102,9 @@ class NodeGenerator:
             return None
 
     def _get_lines(self) -> Optional[Tuple[int, int]]:
+        return None
+        # TODO reenable when we get a relative path, not including home etc.
+        # TODO or simply use another node_creator when running tests
         try:
             file_name = inspect.getfile(self._obj)
         except TypeError:
