@@ -29,6 +29,9 @@ jobs:
           pytest . --cov=src/
           coverage xml -o coverage.xml
           coverage html
+      - name: Push views
+        run: |
+          python3 codoc_views
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
