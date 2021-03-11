@@ -15,7 +15,7 @@ snapshots["test_can_publish_graph 1"] = (
             "Content-Type": "application/json",
         },
         "json": {
-            "commit_hash": None,
+            "commit_hash": "",
             "description": "some description",
             "edges": [{"from_node": "A", "to_node": "B"}],
             "graph_id": "my-graph",
@@ -26,14 +26,17 @@ snapshots["test_can_publish_graph 1"] = (
                     "identifier": "A",
                     "name": "test",
                     "of_type": "CLASS",
+                    "parent_node": None,
                 },
                 {
                     "description": "test",
                     "identifier": "B",
                     "name": "test",
                     "of_type": "CLASS",
+                    "parent_node": None,
                 },
             ],
         },
+        "url": "https://codoc-api-production.herokuapp.com/graphs/1/graphs/",
     },
 )

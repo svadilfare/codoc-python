@@ -94,16 +94,17 @@ def get_name(obj: ObjectType) -> str:
     However on typing etc, they don't have a name in the
     same way, so there it will be a bit more tailored.
     """
-    try:
-        return obj.__name__
-    except AttributeError:
-        try:
-            return obj._name
-        except AttributeError:
-            try:
-                return obj.name
-            except AttributeError:
-                raise NameNotFound(obj)
+    name = (
+        getattr(obj, "__name__", None)
+        or getattr(obj, "_name", None)
+        or getattr(obj, "name", None)
+    )
+
+    if name is None:
+        return str(obj)
+        # raise NameNotFound(obj)
+
+    return name
 
 
 def get_type(obj: ObjectType) -> NodeType:

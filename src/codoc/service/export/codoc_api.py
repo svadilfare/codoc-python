@@ -2,9 +2,11 @@
 import requests
 from typing import Optional, Dict, Any
 from codoc.domain.model import Graph
+import logging
 
-BASE_URL = "https://codoc-api-production.herokuapp.com/graphs/1/graphs/"
-PUBLISH_URL = f"{BASE_URL}/graphs/1/graphs/"
+logger = logging.getLogger(__name__)
+BASE_URL = "https://codoc-api-production.herokuapp.com/"
+PUBLISH_URL = f"{BASE_URL}graphs/1/graphs/"
 # TODO use better path
 
 
@@ -14,13 +16,16 @@ def publish(
     description: str,
     api_key: str,
     graph: Graph,
-    commit_hash: Optional[str] = None,
+    commit_hash: str = "",
 ) -> str:
     """
     Used to upload a given graph to the web application
 
     Returns the url that the created graph is accessed at.
     """
+    if not api_key:
+        raise ApiKeyNotSupplied()
+
     payload = _get_payload(
         graph=graph,
         graph_id=graph_id,
@@ -29,15 +34,20 @@ def publish(
         commit_hash=commit_hash,
     )
     headers = _get_headers(api_key)
+
     resp = requests.post(
+        url=PUBLISH_URL,
         json=payload,
         headers=headers,
     )
 
-    assert resp.ok
+    if not resp.ok:
+        raise PublishFailed(graph_id, resp.text)
 
     # TODO should return a URL.
-    return resp.text
+    ressource = resp.json()["pk"]
+    print(graph_id, ressource)
+    return ressource
 
 
 def _get_payload(
@@ -58,7 +68,8 @@ def _get_payload(
                 "identifier": node.identifier,
                 "description": node.description,
                 "of_type": node.of_type.name,
-                # TODO add path, args etc
+                "parent_node": node.parent_identifier,
+                # TODO add parent, path, args etc
             }
             for node in graph.nodes
         ],
@@ -78,3 +89,18 @@ def _get_headers(api_key: str) -> Dict[str, str]:
 
 def _get_auth_header(api_key: str) -> str:
     return f"OrgToken {api_key}"
+
+
+class ExportError(Exception):
+    ...
+
+
+class ApiKeyNotSupplied(ExportError):
+    ...
+
+
+class PublishFailed(ExportError):
+    def __init__(self, graph_id: str, resp: str):
+        super().__init__(f"Publishing of {graph_id} failed.\nReason={resp}")
+
+    ...
