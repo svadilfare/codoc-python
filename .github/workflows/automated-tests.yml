@@ -30,6 +30,8 @@ jobs:
           coverage xml -o coverage.xml
           coverage html
       - name: Push views
+        env:
+          CODOC_API_KEY: ${{ secrets.CODOC_API_KEY }}
         run: |
           python3 codoc_views
       - name: SonarCloud Scan

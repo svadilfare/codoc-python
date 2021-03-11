@@ -1,29 +1,25 @@
 #!/usr/bin/env python3
-import os
-
-from codoc.service.graph import create_graph_of_module
-from codoc.service.export import publish
 from codoc.service import filters
 
 import codoc.domain.model
 
 
-def domain_model_view_function():
-    graph = create_graph_of_module(codoc.domain.model)
+@codoc.export.view(
+    label="Domain Model",
+)
+def domain_model_view(graph):
+    """
+    This view presents the basic domain model of the
+    [Codoc](https://codoc.org/) system.
 
-    class_graph = filters.include_only_classes(graph)
+    It shows the core models.
 
-    publish(
-        graph=class_graph,
-        graph_id="domain_model",
-        label="Domain Model",
-        description="""
-        This view presents the basic domain model of the
-        [Codoc](https://codoc.org/) system.
+    To actually utilize the classes, look at the service layer.
+    """
 
-        It shows the core models.
+    domain_model_filter = filters.include_only_children_of_obj(codoc.domain.model)
 
-        To actually utilize the classes, look at the service layer.
-        """,
-        api_key=os.getenv("CODOC_API_KEY"),
-    )
+    graph = domain_model_filter(graph)
+    graph = filters.include_only_classes(graph)
+
+    return graph
