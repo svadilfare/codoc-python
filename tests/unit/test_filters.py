@@ -99,10 +99,10 @@ def node_class(create_node):
 
 
 @pytest.fixture
-def node_class_b(create_node, node_module):
+def node_class_b(create_node, node_module_b):
     return create_node(
         identifier="ClassB",
-        parent_identifier=node_module.identifier,
+        parent_identifier=node_module_b.identifier,
         of_type=NodeType.CLASS,
     )
 
@@ -127,5 +127,9 @@ def node_module(create_node):
 
 
 @pytest.fixture
-def node_module_b(create_node):
-    return create_node(identifier="ModuleB", of_type=NodeType.MODULE)
+def node_module_b(create_node, node_module):
+    return create_node(
+        identifier="ModuleB",
+        parent_identifier=node_module.identifier,
+        of_type=NodeType.MODULE,
+    )

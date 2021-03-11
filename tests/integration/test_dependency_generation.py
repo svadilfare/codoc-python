@@ -9,22 +9,27 @@ from codoc.service.parsing.dependency import (
 )
 
 
-def test_get_dependency_edges_match_snapshot(examples, snapshot, kwargs):
-    snapshot.assert_match(get_dependency_edges(**kwargs))
+def test_get_dependency_edges_match_snapshot(examples, assert_match_snap, kwargs):
+    assert_match_snap(get_dependency_edges(**kwargs))
 
 
-def test_get_dependency_nodes_with_parents_match_snapshot(examples, snapshot, kwargs):
-    snapshot.assert_match(get_dependency_nodes_with_parents(**kwargs))
+def test_get_dependency_nodes_with_parents_match_snapshot(
+    examples, assert_match_snap, kwargs
+):
+    assert_match_snap(get_dependency_nodes_with_parents(**kwargs))
 
 
-def test_get_dependency_nodes_match_snapshot(examples, snapshot, kwargs):
-    snapshot.assert_match(get_dependency_nodes(**kwargs))
+def test_get_dependency_nodes_match_snapshot(examples, assert_match_snap, kwargs):
+    assert_match_snap(get_dependency_nodes(**kwargs))
 
 
-@pytest.fixture()
-def kwargs(obj, create_node):
+@pytest.fixture(
+    params=(False, True), ids=["Without external nodes", "With external nodes"]
+)
+def kwargs(request, obj, create_node):
     return {
         "obj": obj,
+        "include_external_dependencies": request.param,
         "create_node": lambda obj: create_node(
             identifier=get_identifier_of_object(obj)
         ),

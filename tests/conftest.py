@@ -24,6 +24,23 @@ def create_edge():
 
 
 @pytest.fixture
+def assert_match_snap(snapshot):
+    def _to_snap(obj: object):
+        if isinstance(obj, Node):
+            return obj.identifier
+        if isinstance(obj, Dependency):
+            return (obj.from_node, obj.to_node)
+        if isinstance(obj, (list, set, frozenset)):
+            return list(sorted(_to_snap(elm) for elm in obj))
+        if isinstance(obj, Graph):
+            return (_to_snap(obj.nodes), _to_snap(obj.edges))
+
+        return obj
+
+    return lambda obj: snapshot.assert_match(_to_snap(obj))
+
+
+@pytest.fixture
 def create_node():
     def _func(**kwargs):
         kwargs.setdefault("name", "test")

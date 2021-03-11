@@ -3,7 +3,10 @@
 from codoc.service.graph import create_graph_of_module
 
 
-def test_happy_path_create_graph(examples, snapshot):
-    graph = create_graph_of_module(examples)
+def test_happy_path_create_graph(
+    examples,
+    assert_match_snap,
+):
+    graph = create_graph_of_module(examples, include_external_dependencies=False)
 
-    snapshot.assert_match((graph.nodes, graph.edges))
+    assert_match_snap(graph)

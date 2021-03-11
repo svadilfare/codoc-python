@@ -11,13 +11,17 @@ from codoc.service.parsing.node import create_node_from_object, get_identifier_o
 from .object_unpacker import recursively_get_all_subobjects_in_object
 
 
-def create_graph_of_module(module: types.ModuleType) -> Graph:
+def create_graph_of_module(
+    module: types.ModuleType, include_external_dependencies: bool = True
+) -> Graph:
     all_objects = frozenset(recursively_get_all_subobjects_in_object(module))
     nodes = set(
         node
         for obj in all_objects
         for node in {create_node_from_object(obj)}
-        | get_dependency_nodes_with_parents(obj)
+        | get_dependency_nodes_with_parents(
+            obj, include_external_dependencies=include_external_dependencies
+        )
     )
     edges = set(
         Dependency(
@@ -25,6 +29,8 @@ def create_graph_of_module(module: types.ModuleType) -> Graph:
             to_node=dependency.identifier,
         )
         for obj in all_objects
-        for dependency in get_dependency_nodes(obj)
+        for dependency in get_dependency_nodes(
+            obj, include_external_dependencies=include_external_dependencies
+        )
     )
     return Graph(nodes=nodes, edges=edges)

@@ -31,9 +31,7 @@ def get_dependency_nodes(
     Returns all direct dependencies of the input object
     """
     kwargs = bootstrap_kwargs(kwargs)
-    return DependencyInspector(
-        obj, create_node=create_node_from_object, get_parent=get_parent_of_object
-    ).get_dependency_nodes()
+    return DependencyInspector(obj, **kwargs).get_dependency_nodes()
 
 
 def get_dependency_nodes_with_parents(
@@ -62,6 +60,7 @@ def get_dependency_edges(
 def bootstrap_kwargs(kwargs):
     kwargs.setdefault("create_node", create_node_from_object)
     kwargs.setdefault("get_parent", get_parent_of_object)
+    kwargs.setdefault("include_external_dependencies", True)
     return kwargs
 
 
@@ -75,16 +74,18 @@ class DependencyInspector:
         obj: ObjectType,
         create_node: Callable[[ObjectType], Node],
         get_parent: Callable[[ObjectType], ObjectType],
+        include_external_dependencies: bool,
     ):
         if is_builtin(obj):
             raise UnexpectedBuiltinError()
-        # TODO maybe we should make it depend on the type then.
+        # TODO maybe we should return set obj to the type of obj
         if is_an_instance(obj):
             raise TypeError()
 
         self._obj = obj
         self.create_node = create_node
         self.get_parent = get_parent
+        self._include_external_dependencies = include_external_dependencies
         self._node = create_node(obj)
         self._module = inspect.getmodule(self._obj)
 
@@ -107,11 +108,18 @@ class DependencyInspector:
             if obj is not None
         )
 
-    def get_dependency_nodes(self) -> Iterable[Node]:
-        return (
+    def get_dependency_nodes(self) -> FrozenSet[Node]:
+        return frozenset(
             self.create_node(obj)
             for obj in self.get_dependency_objects()
-            if obj is not None and is_not_an_instance(obj)
+            if obj is not None
+            and is_not_an_instance(obj)
+            and (self._include_external_dependencies or self.is_in_module(obj))
+        )
+
+    def is_in_module(self, obj: ObjectType) -> bool:
+        return obj is not None and (
+            obj == self._module or self.is_in_module(self.get_parent(obj))
         )
 
     def get_dependency_objects(self) -> Iterable[ObjectType]:
@@ -157,12 +165,6 @@ class DependencyInspector:
             self._node.name,
             self.get_identifier_names_in_scope(),
         ).get_identifiers()
-
-    def identifier_is_in_scope(self, identifier: str) -> bool:
-        return any(
-            identifier == idx2 or identifier.startswith(idx2 + ".")
-            for idx2 in self.get_identifier_names_in_scope()
-        )
 
     @lru_cache(maxsize=None)
     def get_identifier_names_in_scope(self) -> Set[str]:
