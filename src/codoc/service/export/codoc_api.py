@@ -46,7 +46,6 @@ def publish(
 
     # TODO should return a URL.
     ressource = resp.json()["pk"]
-    print(graph_id, ressource)
     return ressource
 
 

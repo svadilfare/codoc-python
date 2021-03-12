@@ -13,6 +13,7 @@ class_graph = filter_only_classes(graph)
 ````
 """
 from .exclusively_classes import include_only_classes
+from .children_based import get_children_of
 from .type_exclusion_filter import exclude_classes, exclude_functions, exclude_modules
 
 
@@ -21,4 +22,5 @@ __all__ = [
     "exclude_classes",
     "exclude_functions",
     "exclude_modules",
+    "get_children_of",
 ]

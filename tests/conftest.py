@@ -58,3 +58,33 @@ def create_node():
 @pytest.fixture
 def examples():
     return exampleModule
+
+
+@pytest.fixture
+def generic_graph(create_graph, create_node, create_edge):
+    nodeA = create_node(identifier="A")
+    nodeB = create_node(identifier="B")
+    edge = create_edge(from_node=nodeA, to_node=nodeB)
+
+    return create_graph(nodes=[nodeA, nodeB], edges=[edge])
+
+
+@pytest.fixture
+def api_key():
+    return "ABCD"
+
+
+@pytest.fixture
+def codoc_view_file_content():
+    return """
+from codoc.service.export.codoc_view import view
+from codoc.service import filters
+
+@view(label="My Graph")
+def view_domain_classes(graph):
+    return filters.include_only_classes(graph)
+
+@view(label="My Graph2")
+def view_all(graph):
+    return graph
+    """
