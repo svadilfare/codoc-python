@@ -33,19 +33,17 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
 
 # TODO find a way to cache result, i.e dynamic programming
 # TODO test these functions individually
-def is_node_accepted(
-    node: Node, graph: Graph, allowed_parent_identifier: NodeId
-) -> bool:
+def is_node_accepted(node: Node, graph: Graph, allowed_identifier: NodeId) -> bool:
+    if node.identifier == allowed_identifier:
+        return True
 
     parent_id = node.parent_identifier
     if not parent_id:
         return False
-    if parent_id == allowed_parent_identifier:
-        return True
 
     parent = get_node(node.parent_identifier, graph)
 
-    return is_node_accepted(parent, graph, allowed_parent_identifier)
+    return is_node_accepted(parent, graph, allowed_identifier)
 
 
 def is_edge_accepted(

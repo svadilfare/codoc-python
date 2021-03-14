@@ -8,7 +8,7 @@ from snapshottest import Snapshot
 snapshots = Snapshot()
 
 snapshots["TestGetChildrenOfFilter.test_matches_snapshot[Exclude dependencies] 1"] = (
-    ["ClassB", "FuncA"],
+    ["ClassB", "FuncA", "ModuleB"],
     [("ClassB", "FuncA"), ("FuncA", "ClassB")],
 )
 
@@ -23,6 +23,7 @@ snapshots["TestGetChildrenOfFilter.test_matches_snapshot[Include dependencies] 1
         ("FuncA", "FuncB"),
         ("FuncA", "ModuleA"),
         ("ModuleA", "FuncA"),
+        ("ModuleA", "ModuleB"),
     ],
 )
 

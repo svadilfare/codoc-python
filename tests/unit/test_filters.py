@@ -21,18 +21,23 @@ def test_matches_snapshot(filter_function, test_graph, assert_match_snap):
 
 
 class TestGetChildrenOfFilter:
-    def test_matches_snapshot(
-        self, assert_match_snap, filtered_graph, node_class, node_class_b
-    ):
+    def test_matches_snapshot(self, assert_match_snap, filtered_graph):
         assert_match_snap(filtered_graph)
+
+    def test_includes_filtered_elm(self, filtered_graph, obj_to_filter):
+        assert obj_to_filter in filtered_graph.nodes
 
     @pytest.fixture(
         params=[False, True], ids=["Exclude dependencies", "Include dependencies"]
     )
-    def filtered_graph(self, request, test_graph, node_module_b):
+    def filtered_graph(self, request, test_graph, obj_to_filter):
         return filters.get_children_of(
-            node_module_b.identifier, keep_external_nodes=request.param
+            obj_to_filter.identifier, keep_external_nodes=request.param
         )(test_graph)
+
+    @pytest.fixture()
+    def obj_to_filter(self, node_module_b):
+        return node_module_b
 
 
 class TestFilterOnlyClasses:

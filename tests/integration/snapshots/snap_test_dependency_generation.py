@@ -8,251 +8,251 @@ from snapshottest import Snapshot
 snapshots = Snapshot()
 
 snapshots["test_get_dependency_edges_match_snapshot[With external nodes-Class] 1"] = [
-    ("examples/Animal/NodeType.CLASS", "builtins/str/NodeType.CLASS"),
-    ("examples/Animal/NodeType.CLASS", "dataclasses/dataclass/NodeType.FUNCTION"),
-    ("examples/Animal/NodeType.CLASS", "examples/Animal/NodeType.CLASS"),
-    ("examples/Animal/NodeType.CLASS", "examples/AnimalType/NodeType.CLASS"),
-    ("examples/Animal/NodeType.CLASS", "typing/List/NodeType.CLASS"),
+    ("Animal/NodeType.CLASS/examples", "Animal/NodeType.CLASS/examples"),
+    ("Animal/NodeType.CLASS/examples", "AnimalType/NodeType.CLASS/examples"),
+    ("Animal/NodeType.CLASS/examples", "List/NodeType.CLASS/typing"),
+    ("Animal/NodeType.CLASS/examples", "dataclass/NodeType.FUNCTION/dataclasses"),
+    ("Animal/NodeType.CLASS/examples", "str/NodeType.CLASS/builtins"),
 ]
 
 snapshots[
     "test_get_dependency_edges_match_snapshot[With external nodes-Function] 1"
 ] = [
-    ("examples/random_function/NodeType.FUNCTION", "builtins/str/NodeType.CLASS"),
     (
-        "examples/random_function/NodeType.FUNCTION",
-        "examples/random_function/NodeType.FUNCTION",
+        "random_function/NodeType.FUNCTION/examples",
+        "random_function/NodeType.FUNCTION/examples",
     ),
+    ("random_function/NodeType.FUNCTION/examples", "str/NodeType.CLASS/builtins"),
 ]
 
 snapshots["test_get_dependency_edges_match_snapshot[With external nodes-Module] 1"] = [
-    ("/examples/NodeType.MODULE", "builtins/bool/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "builtins/int/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "builtins/object/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "builtins/str/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "builtins/type/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "dataclasses/dataclass/NodeType.FUNCTION"),
-    ("/examples/NodeType.MODULE", "enum/Enum/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "enum/auto/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/Animal/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/AnimalType/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/BareClass/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/BareClassExtension/NodeType.CLASS"),
+    ("examples/NodeType.MODULE/", "Animal/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "AnimalType/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "BareClass/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "BareClassExtension/NodeType.CLASS/examples"),
     (
-        "/examples/NodeType.MODULE",
-        "examples/ClassWithHackyDocumentation/NodeType.CLASS",
+        "examples/NodeType.MODULE/",
+        "ClassWithHackyDocumentation/NodeType.CLASS/examples",
     ),
-    ("/examples/NodeType.MODULE", "examples/Course/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/Person/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/StringTypedClass/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/Student/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/examples.foldermodule/NodeType.MODULE"),
-    ("/examples/NodeType.MODULE", "examples/examples.submodule/NodeType.MODULE"),
-    ("/examples/NodeType.MODULE", "examples/random_function/NodeType.FUNCTION"),
-    ("/examples/NodeType.MODULE", "typing/List/NodeType.CLASS"),
+    ("examples/NodeType.MODULE/", "Course/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "Enum/NodeType.CLASS/enum"),
+    ("examples/NodeType.MODULE/", "List/NodeType.CLASS/typing"),
+    ("examples/NodeType.MODULE/", "Person/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "StringTypedClass/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "Student/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "auto/NodeType.CLASS/enum"),
+    ("examples/NodeType.MODULE/", "bool/NodeType.CLASS/builtins"),
+    ("examples/NodeType.MODULE/", "dataclass/NodeType.FUNCTION/dataclasses"),
+    ("examples/NodeType.MODULE/", "examples.foldermodule/NodeType.MODULE/examples"),
+    ("examples/NodeType.MODULE/", "examples.submodule/NodeType.MODULE/examples"),
+    ("examples/NodeType.MODULE/", "int/NodeType.CLASS/builtins"),
+    ("examples/NodeType.MODULE/", "object/NodeType.CLASS/builtins"),
+    ("examples/NodeType.MODULE/", "random_function/NodeType.FUNCTION/examples"),
+    ("examples/NodeType.MODULE/", "str/NodeType.CLASS/builtins"),
+    ("examples/NodeType.MODULE/", "type/NodeType.CLASS/builtins"),
 ]
 
 snapshots[
     "test_get_dependency_edges_match_snapshot[Without external nodes-Class] 1"
 ] = [
-    ("examples/Animal/NodeType.CLASS", "examples/Animal/NodeType.CLASS"),
-    ("examples/Animal/NodeType.CLASS", "examples/AnimalType/NodeType.CLASS"),
+    ("Animal/NodeType.CLASS/examples", "Animal/NodeType.CLASS/examples"),
+    ("Animal/NodeType.CLASS/examples", "AnimalType/NodeType.CLASS/examples"),
 ]
 
 snapshots[
     "test_get_dependency_edges_match_snapshot[Without external nodes-Function] 1"
 ] = [
     (
-        "examples/random_function/NodeType.FUNCTION",
-        "examples/random_function/NodeType.FUNCTION",
+        "random_function/NodeType.FUNCTION/examples",
+        "random_function/NodeType.FUNCTION/examples",
     )
 ]
 
 snapshots[
     "test_get_dependency_edges_match_snapshot[Without external nodes-Module] 1"
 ] = [
-    ("/examples/NodeType.MODULE", "examples/Animal/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/AnimalType/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/BareClass/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/BareClassExtension/NodeType.CLASS"),
+    ("examples/NodeType.MODULE/", "Animal/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "AnimalType/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "BareClass/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "BareClassExtension/NodeType.CLASS/examples"),
     (
-        "/examples/NodeType.MODULE",
-        "examples/ClassWithHackyDocumentation/NodeType.CLASS",
+        "examples/NodeType.MODULE/",
+        "ClassWithHackyDocumentation/NodeType.CLASS/examples",
     ),
-    ("/examples/NodeType.MODULE", "examples/Course/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/Person/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/StringTypedClass/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/Student/NodeType.CLASS"),
-    ("/examples/NodeType.MODULE", "examples/examples.foldermodule/NodeType.MODULE"),
-    ("/examples/NodeType.MODULE", "examples/examples.submodule/NodeType.MODULE"),
-    ("/examples/NodeType.MODULE", "examples/random_function/NodeType.FUNCTION"),
+    ("examples/NodeType.MODULE/", "Course/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "Person/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "StringTypedClass/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "Student/NodeType.CLASS/examples"),
+    ("examples/NodeType.MODULE/", "examples.foldermodule/NodeType.MODULE/examples"),
+    ("examples/NodeType.MODULE/", "examples.submodule/NodeType.MODULE/examples"),
+    ("examples/NodeType.MODULE/", "random_function/NodeType.FUNCTION/examples"),
 ]
 
 snapshots["test_get_dependency_nodes_match_snapshot[With external nodes-Class] 1"] = [
-    "builtins/str/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "List/NodeType.CLASS/typing",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "str/NodeType.CLASS/builtins",
 ]
 
 snapshots[
     "test_get_dependency_nodes_match_snapshot[With external nodes-Function] 1"
-] = ["builtins/str/NodeType.CLASS", "examples/random_function/NodeType.FUNCTION"]
+] = ["random_function/NodeType.FUNCTION/examples", "str/NodeType.CLASS/builtins"]
 
 snapshots["test_get_dependency_nodes_match_snapshot[With external nodes-Module] 1"] = [
-    "builtins/bool/NodeType.CLASS",
-    "builtins/int/NodeType.CLASS",
-    "builtins/object/NodeType.CLASS",
-    "builtins/str/NodeType.CLASS",
-    "builtins/type/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "enum/Enum/NodeType.CLASS",
-    "enum/auto/NodeType.CLASS",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "examples/BareClass/NodeType.CLASS",
-    "examples/BareClassExtension/NodeType.CLASS",
-    "examples/ClassWithHackyDocumentation/NodeType.CLASS",
-    "examples/Course/NodeType.CLASS",
-    "examples/Person/NodeType.CLASS",
-    "examples/StringTypedClass/NodeType.CLASS",
-    "examples/Student/NodeType.CLASS",
-    "examples/examples.foldermodule/NodeType.MODULE",
-    "examples/examples.submodule/NodeType.MODULE",
-    "examples/random_function/NodeType.FUNCTION",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "BareClass/NodeType.CLASS/examples",
+    "BareClassExtension/NodeType.CLASS/examples",
+    "ClassWithHackyDocumentation/NodeType.CLASS/examples",
+    "Course/NodeType.CLASS/examples",
+    "Enum/NodeType.CLASS/enum",
+    "List/NodeType.CLASS/typing",
+    "Person/NodeType.CLASS/examples",
+    "StringTypedClass/NodeType.CLASS/examples",
+    "Student/NodeType.CLASS/examples",
+    "auto/NodeType.CLASS/enum",
+    "bool/NodeType.CLASS/builtins",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "examples.foldermodule/NodeType.MODULE/examples",
+    "examples.submodule/NodeType.MODULE/examples",
+    "int/NodeType.CLASS/builtins",
+    "object/NodeType.CLASS/builtins",
+    "random_function/NodeType.FUNCTION/examples",
+    "str/NodeType.CLASS/builtins",
+    "type/NodeType.CLASS/builtins",
 ]
 
 snapshots[
     "test_get_dependency_nodes_match_snapshot[Without external nodes-Class] 1"
-] = ["examples/Animal/NodeType.CLASS", "examples/AnimalType/NodeType.CLASS"]
+] = ["Animal/NodeType.CLASS/examples", "AnimalType/NodeType.CLASS/examples"]
 
 snapshots[
     "test_get_dependency_nodes_match_snapshot[Without external nodes-Function] 1"
-] = ["examples/random_function/NodeType.FUNCTION"]
+] = ["random_function/NodeType.FUNCTION/examples"]
 
 snapshots[
     "test_get_dependency_nodes_match_snapshot[Without external nodes-Module] 1"
 ] = [
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "examples/BareClass/NodeType.CLASS",
-    "examples/BareClassExtension/NodeType.CLASS",
-    "examples/ClassWithHackyDocumentation/NodeType.CLASS",
-    "examples/Course/NodeType.CLASS",
-    "examples/Person/NodeType.CLASS",
-    "examples/StringTypedClass/NodeType.CLASS",
-    "examples/Student/NodeType.CLASS",
-    "examples/examples.foldermodule/NodeType.MODULE",
-    "examples/examples.submodule/NodeType.MODULE",
-    "examples/random_function/NodeType.FUNCTION",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "BareClass/NodeType.CLASS/examples",
+    "BareClassExtension/NodeType.CLASS/examples",
+    "ClassWithHackyDocumentation/NodeType.CLASS/examples",
+    "Course/NodeType.CLASS/examples",
+    "Person/NodeType.CLASS/examples",
+    "StringTypedClass/NodeType.CLASS/examples",
+    "Student/NodeType.CLASS/examples",
+    "examples.foldermodule/NodeType.MODULE/examples",
+    "examples.submodule/NodeType.MODULE/examples",
+    "random_function/NodeType.FUNCTION/examples",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[With external nodes-Class] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/dataclasses/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "/typing/NodeType.MODULE",
-    "builtins/str/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "List/NodeType.CLASS/typing",
+    "builtins/NodeType.MODULE/",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "dataclasses/NodeType.MODULE/",
+    "examples/NodeType.MODULE/",
+    "str/NodeType.CLASS/builtins",
+    "typing/NodeType.MODULE/",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[With external nodes-Function] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "builtins/str/NodeType.CLASS",
-    "examples/random_function/NodeType.FUNCTION",
+    "builtins/NodeType.MODULE/",
+    "examples/NodeType.MODULE/",
+    "random_function/NodeType.FUNCTION/examples",
+    "str/NodeType.CLASS/builtins",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[With external nodes-Module] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/dataclasses/NodeType.MODULE",
-    "/enum/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "/typing/NodeType.MODULE",
-    "builtins/bool/NodeType.CLASS",
-    "builtins/int/NodeType.CLASS",
-    "builtins/object/NodeType.CLASS",
-    "builtins/str/NodeType.CLASS",
-    "builtins/type/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "enum/Enum/NodeType.CLASS",
-    "enum/auto/NodeType.CLASS",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "examples/BareClass/NodeType.CLASS",
-    "examples/BareClassExtension/NodeType.CLASS",
-    "examples/ClassWithHackyDocumentation/NodeType.CLASS",
-    "examples/Course/NodeType.CLASS",
-    "examples/Person/NodeType.CLASS",
-    "examples/StringTypedClass/NodeType.CLASS",
-    "examples/Student/NodeType.CLASS",
-    "examples/examples.foldermodule/NodeType.MODULE",
-    "examples/examples.submodule/NodeType.MODULE",
-    "examples/random_function/NodeType.FUNCTION",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "BareClass/NodeType.CLASS/examples",
+    "BareClassExtension/NodeType.CLASS/examples",
+    "ClassWithHackyDocumentation/NodeType.CLASS/examples",
+    "Course/NodeType.CLASS/examples",
+    "Enum/NodeType.CLASS/enum",
+    "List/NodeType.CLASS/typing",
+    "Person/NodeType.CLASS/examples",
+    "StringTypedClass/NodeType.CLASS/examples",
+    "Student/NodeType.CLASS/examples",
+    "auto/NodeType.CLASS/enum",
+    "bool/NodeType.CLASS/builtins",
+    "builtins/NodeType.MODULE/",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "dataclasses/NodeType.MODULE/",
+    "enum/NodeType.MODULE/",
+    "examples.foldermodule/NodeType.MODULE/examples",
+    "examples.submodule/NodeType.MODULE/examples",
+    "examples/NodeType.MODULE/",
+    "int/NodeType.CLASS/builtins",
+    "object/NodeType.CLASS/builtins",
+    "random_function/NodeType.FUNCTION/examples",
+    "str/NodeType.CLASS/builtins",
+    "type/NodeType.CLASS/builtins",
+    "typing/NodeType.MODULE/",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[Without external nodes-Class] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/dataclasses/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "/typing/NodeType.MODULE",
-    "builtins/str/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "List/NodeType.CLASS/typing",
+    "builtins/NodeType.MODULE/",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "dataclasses/NodeType.MODULE/",
+    "examples/NodeType.MODULE/",
+    "str/NodeType.CLASS/builtins",
+    "typing/NodeType.MODULE/",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[Without external nodes-Function] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "builtins/str/NodeType.CLASS",
-    "examples/random_function/NodeType.FUNCTION",
+    "builtins/NodeType.MODULE/",
+    "examples/NodeType.MODULE/",
+    "random_function/NodeType.FUNCTION/examples",
+    "str/NodeType.CLASS/builtins",
 ]
 
 snapshots[
     "test_get_dependency_nodes_with_parents_match_snapshot[Without external nodes-Module] 1"
 ] = [
-    "/builtins/NodeType.MODULE",
-    "/dataclasses/NodeType.MODULE",
-    "/enum/NodeType.MODULE",
-    "/examples/NodeType.MODULE",
-    "/typing/NodeType.MODULE",
-    "builtins/bool/NodeType.CLASS",
-    "builtins/int/NodeType.CLASS",
-    "builtins/object/NodeType.CLASS",
-    "builtins/str/NodeType.CLASS",
-    "builtins/type/NodeType.CLASS",
-    "dataclasses/dataclass/NodeType.FUNCTION",
-    "enum/Enum/NodeType.CLASS",
-    "enum/auto/NodeType.CLASS",
-    "examples/Animal/NodeType.CLASS",
-    "examples/AnimalType/NodeType.CLASS",
-    "examples/BareClass/NodeType.CLASS",
-    "examples/BareClassExtension/NodeType.CLASS",
-    "examples/ClassWithHackyDocumentation/NodeType.CLASS",
-    "examples/Course/NodeType.CLASS",
-    "examples/Person/NodeType.CLASS",
-    "examples/StringTypedClass/NodeType.CLASS",
-    "examples/Student/NodeType.CLASS",
-    "examples/examples.foldermodule/NodeType.MODULE",
-    "examples/examples.submodule/NodeType.MODULE",
-    "examples/random_function/NodeType.FUNCTION",
-    "typing/List/NodeType.CLASS",
+    "Animal/NodeType.CLASS/examples",
+    "AnimalType/NodeType.CLASS/examples",
+    "BareClass/NodeType.CLASS/examples",
+    "BareClassExtension/NodeType.CLASS/examples",
+    "ClassWithHackyDocumentation/NodeType.CLASS/examples",
+    "Course/NodeType.CLASS/examples",
+    "Enum/NodeType.CLASS/enum",
+    "List/NodeType.CLASS/typing",
+    "Person/NodeType.CLASS/examples",
+    "StringTypedClass/NodeType.CLASS/examples",
+    "Student/NodeType.CLASS/examples",
+    "auto/NodeType.CLASS/enum",
+    "bool/NodeType.CLASS/builtins",
+    "builtins/NodeType.MODULE/",
+    "dataclass/NodeType.FUNCTION/dataclasses",
+    "dataclasses/NodeType.MODULE/",
+    "enum/NodeType.MODULE/",
+    "examples.foldermodule/NodeType.MODULE/examples",
+    "examples.submodule/NodeType.MODULE/examples",
+    "examples/NodeType.MODULE/",
+    "int/NodeType.CLASS/builtins",
+    "object/NodeType.CLASS/builtins",
+    "random_function/NodeType.FUNCTION/examples",
+    "str/NodeType.CLASS/builtins",
+    "type/NodeType.CLASS/builtins",
+    "typing/NodeType.MODULE/",
 ]
