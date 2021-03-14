@@ -29,6 +29,11 @@ jobs:
           pytest . --cov=src/
           coverage xml -o coverage.xml
           coverage html
+      - name: Push views
+        env:
+          CODOC_API_KEY: ${{ secrets.CODOC_API_KEY }}
+        run: |
+          codoc publish
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import importlib
+import zlib
 import inspect
 import logging
 from typing import Optional, Tuple
@@ -34,12 +35,19 @@ def get_identifier_of_object(obj: ObjectType) -> str:
     """
     Returns the unique identifier of this object
     """
-    parent = get_parent_of_object(obj)
-    if parent:
-        parent_name = get_name(parent)
-    else:
-        parent_name = ""
-    return f"{parent_name}/{get_name(obj)}/{get_type(obj)}"
+    try:
+        hash_id = hex(zlib.adler32(inspect.getsource(obj)))[2:]
+    except (TypeError, OSError):
+        # This is a sutiable backup.
+        # If we cannot find the source, it's probably
+        # because the element is a builtin,
+        # and the parent is then a fine hash.
+        parent = get_parent_of_object(obj)
+        if parent:
+            hash_id = get_name(parent)
+        else:
+            hash_id = ""
+    return f"{get_name(obj)}/{get_type(obj)}/{hash_id}"
 
 
 def get_description(obj: ObjectType) -> str:
@@ -94,16 +102,17 @@ def get_name(obj: ObjectType) -> str:
     However on typing etc, they don't have a name in the
     same way, so there it will be a bit more tailored.
     """
-    try:
-        return obj.__name__
-    except AttributeError:
-        try:
-            return obj._name
-        except AttributeError:
-            try:
-                return obj.name
-            except AttributeError:
-                raise NameNotFound(obj)
+    name = (
+        getattr(obj, "__name__", None)
+        or getattr(obj, "_name", None)
+        or getattr(obj, "name", None)
+    )
+
+    if name is None:
+        return str(obj)
+        # raise NameNotFound(obj)
+
+    return name
 
 
 def get_type(obj: ObjectType) -> NodeType:

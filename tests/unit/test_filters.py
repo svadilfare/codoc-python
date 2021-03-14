@@ -15,9 +15,29 @@ from codoc.domain.helpers import contains_node, contains_dependency_between
         filters.exclude_modules,
     ],
 )
-def test_matches_snapshot(filter_function, test_graph, snapshot):
+def test_matches_snapshot(filter_function, test_graph, assert_match_snap):
     filtered_graph = filter_function(test_graph)
-    snapshot.assert_match((filtered_graph.nodes, filtered_graph.edges))
+    assert_match_snap(filtered_graph)
+
+
+class TestGetChildrenOfFilter:
+    def test_matches_snapshot(self, assert_match_snap, filtered_graph):
+        assert_match_snap(filtered_graph)
+
+    def test_includes_filtered_elm(self, filtered_graph, obj_to_filter):
+        assert obj_to_filter in filtered_graph.nodes
+
+    @pytest.fixture(
+        params=[False, True], ids=["Exclude dependencies", "Include dependencies"]
+    )
+    def filtered_graph(self, request, test_graph, obj_to_filter):
+        return filters.get_children_of(
+            obj_to_filter.identifier, keep_external_nodes=request.param
+        )(test_graph)
+
+    @pytest.fixture()
+    def obj_to_filter(self, node_module_b):
+        return node_module_b
 
 
 class TestFilterOnlyClasses:
@@ -85,6 +105,8 @@ def test_graph(
             create_edge(node_class_b, node_class),
             create_edge(node_class, node_function),
             create_edge(node_class, node_module),
+            create_edge(node_class_b, node_function),
+            create_edge(node_function, node_class_b),
             create_edge(node_module, node_function),
             create_edge(node_function, node_module),
             create_edge(node_function, node_function_b),
@@ -108,17 +130,20 @@ def node_class_b(create_node, node_module_b):
 
 
 @pytest.fixture
-def node_function(create_node, node_class):
+def node_function(create_node, node_class_b):
     return create_node(
         identifier="FuncA",
-        parent_identifier=node_class.identifier,
+        parent_identifier=node_class_b.identifier,
         of_type=NodeType.FUNCTION,
     )
 
 
 @pytest.fixture
-def node_function_b(create_node):
-    return create_node(identifier="FuncB", of_type=NodeType.FUNCTION)
+def node_function_b(create_node, node_module_b):
+    return create_node(
+        identifier="FuncB",
+        of_type=NodeType.FUNCTION,
+    )
 
 
 @pytest.fixture

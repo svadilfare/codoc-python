@@ -117,6 +117,11 @@ class DependencyInspector:
             and (self._include_external_dependencies or self.is_in_module(obj))
         )
 
+    # TODO test this function PLEASE
+    # This is currently wrong. It also is true for codoc.domain.model when
+    # finding dependencies in codoc.services
+    # TODO maybe use filter instead
+    # TODO maybe filter shoudl set `hidden` not remove completly.
     def is_in_module(self, obj: ObjectType) -> bool:
         return obj is not None and (
             obj == self._module or self.is_in_module(self.get_parent(obj))

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-from typing import Callable
 from codoc.domain.model import Graph, Node, NodeType, Dependency
 from codoc.domain.helpers import get_node
 from .helpers import node_without_parent
-
-FilterType = Callable[[Graph], Graph]
+from .types import FilterType
 
 
 def exclude_modules(graph: Graph) -> FilterType:

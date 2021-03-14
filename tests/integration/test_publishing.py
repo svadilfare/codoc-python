@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
 import pytest
 
-# from codoc.service_layer.publishing import GraphPublisher
+from codoc.service.export import publish
 
 
-@pytest.mark.skip("Not implemented")
-def test_can_publish_graph(generic_graph, api_key):
-    ...
+def test_can_publish_graph(mocker, snapshot, generic_graph, api_key):
+    label = "My Label"
+    graph_id = "my-graph"
+    description = "some description"
 
-    # publisher = GraphPublisher(api_key)
+    mock_post = mocker.patch("requests.post")
 
-    # publisher.publish(generic_graph)
+    publish(
+        graph=generic_graph,
+        label=label,
+        graph_id=graph_id,
+        description=description,
+        api_key=api_key,
+    )
+
+    snapshot.assert_match(mock_post.call_args)
 
 
 @pytest.fixture
@@ -22,6 +31,6 @@ def api_key():
 def generic_graph(create_graph, create_node, create_edge):
     nodeA = create_node(identifier="A")
     nodeB = create_node(identifier="B")
-    edge = create_edge(from_node=nodeA, to_node_id=nodeB)
+    edge = create_edge(from_node=nodeA, to_node=nodeB)
 
     return create_graph(nodes=[nodeA, nodeB], edges=[edge])
