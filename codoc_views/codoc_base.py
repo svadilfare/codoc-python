@@ -10,5 +10,4 @@ def view_modules(graph):
     """
     This view contains all the modules that our system contain.
     """
-    # TODO only do internal
     return filters.exclude_functions(filters.exclude_classes(graph))

@@ -21,4 +21,4 @@ def view_domain_model(graph):
         get_identifier_of_object(codoc.domain.model), keep_external_nodes=False
     )(graph)
 
-    return filters.include_only_classes(graph)
+    return filters.class_diagram_filter(graph)

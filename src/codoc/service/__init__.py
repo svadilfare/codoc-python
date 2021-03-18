@@ -14,5 +14,6 @@ that can  be used by a given entry point
 Our usage of a service layer is heavily inspired by
  [Architectural Patterns In Python](https://cosmicpython.com).
 
-For more info about the interface of the function, please go to the examples.
+For more info about the interface of the function, please go to the examples
+
 """

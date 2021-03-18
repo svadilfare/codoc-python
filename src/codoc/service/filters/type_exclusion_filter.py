@@ -1,23 +1,42 @@
 #!/usr/bin/env python3
+"""
+Filters that excludes a given node based on the type it is.
+It will also remove all dependencies (edges) that reach a node that should be excluded
+
+
+i.e exclude_modules will return a new graph with all module nodes have been removed.
+"""
 from codoc.domain.model import Graph, Node, NodeType, Dependency
 from codoc.domain.helpers import get_node
 from .helpers import node_without_parent
-from .types import FilterType
 
 
-def exclude_modules(graph: Graph) -> FilterType:
+def exclude_modules(graph: Graph) -> Graph:
+    """
+    Returns a graph that doesn't have any modules
+    """
     return TypeExclusionFilter(NodeType.MODULE).exclude(graph)
 
 
-def exclude_functions(graph: Graph) -> FilterType:
+def exclude_functions(graph: Graph) -> Graph:
+    """
+    Returns a graph that doesn't have any functions
+    """
     return TypeExclusionFilter(NodeType.FUNCTION).exclude(graph)
 
 
-def exclude_classes(graph: Graph) -> FilterType:
+def exclude_classes(graph: Graph) -> Graph:
+    """
+    Returns a graph that doesn't have any classes
+    """
     return TypeExclusionFilter(NodeType.CLASS).exclude(graph)
 
 
 class TypeExclusionFilter:
+    """
+    Filte
+    """
+
     def __init__(self, exclude_type: NodeType):
         self._excluded_type = exclude_type
 

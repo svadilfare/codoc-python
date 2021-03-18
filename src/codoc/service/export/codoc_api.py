@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 BASE_URL = "https://codoc-api-production.herokuapp.com/"
-PUBLISH_URL = f"{BASE_URL}graphs/1/graphs/"
+PUBLISH_URL = f"{BASE_URL}graphs/org/1/graphs/"
 # TODO use better path
 
 

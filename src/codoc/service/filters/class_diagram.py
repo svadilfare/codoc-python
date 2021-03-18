@@ -4,7 +4,16 @@ from codoc.domain.helpers import get_node
 from .helpers import node_without_parent
 
 
-def include_only_classes(graph: Graph) -> Graph:
+def class_diagram_filter(graph: Graph) -> Graph:
+    """
+    :param graph: Graph to filter
+    :returns: A graph that only contains classes and methods (functions inside classes)
+
+    The Class Diagram filter is useful if you want a traditional class diagram,
+    as it will remove all functions
+    (which aren't inside classes - functions inside classes, are often called methods).
+
+    """
     return Graph(
         edges=set(
             edge

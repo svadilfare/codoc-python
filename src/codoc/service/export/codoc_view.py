@@ -42,6 +42,7 @@ def view(
             )
 
         decorated_function.__name__ = graph_id
+
         decorated_function.__docs__ = description
 
         # Attributes for logging etc

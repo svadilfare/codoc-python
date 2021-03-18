@@ -82,7 +82,7 @@ from codoc.service import filters
 
 @view(label="My Graph")
 def view_domain_classes(graph):
-    return filters.include_only_classes(graph)
+    return filters.class_diagram_filter(graph)
 
 @view(label="My Graph2")
 def view_all(graph):

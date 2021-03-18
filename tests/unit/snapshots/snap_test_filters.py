@@ -27,6 +27,11 @@ snapshots["TestGetChildrenOfFilter.test_matches_snapshot[Include dependencies] 1
     ],
 )
 
+snapshots["test_matches_snapshot[class_diagram_filter] 1"] = (
+    ["ClassA", "ClassB"],
+    [("ClassA", "ClassB"), ("ClassB", "ClassA")],
+)
+
 snapshots["test_matches_snapshot[exclude_classes] 1"] = (
     ["FuncA", "FuncB", "ModuleA", "ModuleB"],
     [
@@ -57,9 +62,4 @@ snapshots["test_matches_snapshot[exclude_modules] 1"] = (
         ("FuncA", "ClassB"),
         ("FuncA", "FuncB"),
     ],
-)
-
-snapshots["test_matches_snapshot[include_only_classes] 1"] = (
-    ["ClassA", "ClassB"],
-    [("ClassA", "ClassB"), ("ClassB", "ClassA")],
 )

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+The domain model is a conceptual model of the domain that incorporates both behavior and data.
+
+We use it to define the core data classes that are used throughout the project.
+"""
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional, Set, Tuple, Any
@@ -70,6 +75,7 @@ class Dependency:
 @dataclass(frozen=True)
 class Graph:
     """
+
     A Graph is the base element of the system.
     It contains both edges (Dependencies) as well as nodes (classes, functions, etc).
 

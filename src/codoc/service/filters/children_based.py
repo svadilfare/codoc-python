@@ -6,6 +6,28 @@ from .types import FilterType
 
 
 def get_children_of(identifier: str, keep_external_nodes: bool = False) -> FilterType:
+    """
+    :param identifier: The string identifier of the parent class we want children of
+    :param keep_external_nodes: Whether to keep external dependencies of children
+    :returns: A filter function that excludes non-children
+    :rtype: GraphFilter
+
+    Returns a filter that only returns children of the node given via the identifier.
+
+    The returned filter (function) can then be called with a given graph.
+
+    Example
+
+    .. code-block:: python
+
+       identifier = get_identifier_of_object(myproject.subproject)
+       filter_function = get_children_of(identifier)
+
+       filtered_graph = filter_function(graph)
+
+
+
+    """
     if not isinstance(identifier, str):
         raise TypeError(f"Identifier has to be a str, was a {type(identifier)}")
 

@@ -9,7 +9,7 @@ from codoc.domain.helpers import contains_node, contains_dependency_between
 @pytest.mark.parametrize(
     "filter_function",
     [
-        filters.include_only_classes,
+        filters.class_diagram_filter,
         filters.exclude_classes,
         filters.exclude_functions,
         filters.exclude_modules,
@@ -63,7 +63,7 @@ class TestFilterOnlyClasses:
 
     @pytest.fixture
     def filtered_graph(self, test_graph):
-        return filters.include_only_classes(test_graph)
+        return filters.class_diagram_filter(test_graph)
 
 
 @pytest.fixture(params=[0, 1])

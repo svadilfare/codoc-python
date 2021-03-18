@@ -16,30 +16,8 @@ We are currently looking for [beta testers](https://codoc.org/signup/)
 ## Supported Version
 We support python 3.6<
 
-## Getting Started
-Install the codoc SDK:
+## Documentation
 
-``` sh
-pip3 install codoc
-```
+Usage documentation can be found here:
 
-
-Then create a file i.e `codoc_views.py` in your root repository:
-
-``` python
-import os
-from codoc import create_graph_from_module, publish
-from codoc.filters import filter_only_classes
-import my_package
-
-graph = create_graph_from_module(my_package)
-
-class_diagram = filter_only_classes(graph)
-
-publish(
-    graph_id="my_package-classdiagram",
-    label="My super cool graph!",
-    graph=class_diagram,
-    api_key=os.getenv("CODOC_API_KEY")
-)
-```
+https://codoc-python.readthedocs.io/en/latest/
