@@ -54,12 +54,13 @@ Inside this folder, create a new file called ``codoc_sample.py``:
         return filters.exclude_functions(filters.exclude_classes(graph)
 
 
+.. note:: View functions have to be prefixed with `view_`. see :ref:`view_functions`
+
 .. _`simple_config`:
 .. _`first_config`:
 
 Create a config
 -----------------------
-
 
 You will also need a basic config file in the same folder, called
 ``codoconf.py``, so codocpy knows what project you want to analyze:
@@ -73,6 +74,7 @@ You will also need a basic config file in the same folder, called
     def bootstrap():
         return create_graph_of_module(myproject)
 
+.. note:: Using django? Please see :ref:`django` to bootstrap that correctly.
 
 You can verify that codoc can find your views:
 

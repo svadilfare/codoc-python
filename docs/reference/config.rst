@@ -56,7 +56,7 @@ Django
 Django needs you to bootstrap and import settings prior to importing any
 modules.
 
-The following bootstrapping example will do this, which is taken from our own
+The following config will do this, which is taken from our own
 backend, which is also written in django:
 
 .. code-block:: python

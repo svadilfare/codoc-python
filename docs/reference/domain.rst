@@ -30,6 +30,12 @@ Node
    :members:
    :inherited-members:
 
+Node Type
+''''''''''
+.. autoclass:: NodeType
+   :members:
+   :inherited-members:
+
 Dependency
 ***************
 
