@@ -91,9 +91,9 @@ html_theme_options = {
     "light_logo": "img/logo-color.svg",
     "dark_logo": "img/logo-white.svg",
 }
-html_logo = "img/logo-color.svg"
+html_logo = "_static/img/logo-color.svg"
 
-html_favicon = "img/favicon.ico"
+html_favicon = "_static/img/favicon.ico"
 
 add_module_names = False
 # Theme options are theme-specific and customize the look and feel of a theme
