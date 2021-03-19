@@ -1,7 +1,12 @@
 from setuptools import setup, find_packages
 
-with open("../README.md") as f:
-    readme = f.read()
+try:
+    with open("../README.md") as f:
+        readme = f.read()
+except FileNotFoundError:
+    # If run by docs, it will not use the correct path
+    with open("README.md") as f:
+        readme = f.read()
 
 setup(
     name="codoc-python",
