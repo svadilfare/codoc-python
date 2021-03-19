@@ -87,10 +87,7 @@ html_theme_options = {
     },
 }
 html_static_path = ["_static"]
-html_theme_options = {
-    "light_logo": "img/logo-color.svg",
-    "dark_logo": "img/logo-white.svg",
-}
+
 html_logo = "_static/img/logo-color.svg"
 
 html_favicon = "_static/img/favicon.ico"
