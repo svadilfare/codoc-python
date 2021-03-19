@@ -78,6 +78,19 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = "furo"
+html_theme_options = {
+    "light_css_variables": {
+        "color-brand-primary": "#f05623",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#f05623",
+    },
+}
+html_static_path = ["_static"]
+html_theme_options = {
+    "light_logo": "img/logo-color.svg",
+    "dark_logo": "img/logo-white.svg",
+}
 html_logo = "img/logo-color.svg"
 
 html_favicon = "img/favicon.ico"
