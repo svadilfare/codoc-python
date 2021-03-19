@@ -5,8 +5,8 @@ from codoc.domain.model import Graph
 import logging
 
 logger = logging.getLogger(__name__)
-BASE_URL = "https://codoc-api-production.herokuapp.com/"
-PUBLISH_URL = f"{BASE_URL}graphs/org/1/graphs/"
+BASE_URL = "https://api.codoc.org/"
+PUBLISH_URL = f"{BASE_URL}graphs/"
 # TODO use better path
 
 

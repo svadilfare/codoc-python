@@ -6,14 +6,15 @@ the Codoc SDK.
 
 Mainly used to publish your views to the webapp.
 """
+import sys
 import os
 import fire
-import codoc
-from codoc.service.graph import create_graph_of_module
 
 from codoc.service.finder.files import (
     get_all_codoc_files,
 )
+
+from codoc.service.finder.config import get_config
 
 from codoc.service.finder.views import get_views_in_file, get_views_in_folder
 
@@ -44,7 +45,17 @@ class CliHandler:
         api_key = os.getenv("CODOC_API_KEY")
         if not api_key:
             return NO_API_ERROR
-        graph = create_graph_of_module(codoc)
+
+        sys.path.append(os.getcwd())
+        try:
+            config = get_config(self._path)
+        except Exception as e:
+            return f"Could not load config ({e})"
+
+        try:
+            graph = config.bootstrap()
+        except Exception as e:
+            return f"config could not run bootstrap ({e})"
 
         files = get_all_codoc_files(self._path)
         views = [view for f in files for view in get_views_in_file(f)]

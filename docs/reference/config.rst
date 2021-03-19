@@ -53,4 +53,49 @@ a need to bootstrap your code before it can run.
 Django
 ---------
 
-**TODO**
+Django needs you to bootstrap and import settings prior to importing any
+modules.
+
+The following bootstrapping example will do this, which is taken from our own
+backend, which is also written in django:
+
+.. code-block:: python
+
+    import os
+    from codoc.service.graph import create_graph_of_module
+
+
+    def bootstrap():
+
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
+        import django
+
+        django.setup()
+        import organizations
+
+        return create_graph_of_module(organizations)
+
+
+An important note with django is that you don't, in the same fashion, have a
+singular module, but rather multiple. A cool thing here, however, is that graphs
+can be combined. We do something like this, in our application:
+
+.. code-block:: python
+
+    import os
+    from codoc.service.graph import create_graph_of_module
+
+
+    def bootstrap():
+
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
+        import django
+
+        django.setup()
+        import organizations
+        import graphs
+
+
+        return create_graph_of_module(organizations) + create_graph_of_module(graphs)
+
+And you can then add all the modules you have that are relevant.
