@@ -78,7 +78,6 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = "furo"
-
 html_logo = "img/logo-color.svg"
 
 html_favicon = "img/favicon.ico"
