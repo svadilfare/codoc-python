@@ -79,6 +79,7 @@ pygments_style = None
 #
 html_theme = "furo"
 html_theme_options = {
+    "sidebar_hide_name": True,
     "light_logo": "img/logo-color.svg",
     "dark_logo": "img/logo-white.svg",
     "light_css_variables": {
