@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath("../src/"))
 
 # -- Project information -----------------------------------------------------
 
-project = "Codocpy"
+project = "Codoc.py"
 copyright = "2021, Codoc"
 author = "Codoc"
 
@@ -79,6 +79,8 @@ pygments_style = None
 #
 html_theme = "furo"
 html_theme_options = {
+    "light_logo": "img/logo-color.svg",
+    "dark_logo": "img/logo-white.svg",
     "light_css_variables": {
         "color-brand-primary": "#f05623",
     },
@@ -88,7 +90,6 @@ html_theme_options = {
 }
 html_static_path = ["_static"]
 
-html_logo = "_static/img/logo-color.svg"
 
 html_favicon = "_static/img/favicon.ico"
 
