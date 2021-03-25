@@ -115,6 +115,6 @@ can be combined. We do something like this, in our application:
         import graphs
 
 
-        return create_graph_of_module(organizations) + create_graph_of_module(graphs)
+        return create_graph_of_module(organizations) | create_graph_of_module(graphs)
 
 And you can then add all the modules you have that are relevant.
