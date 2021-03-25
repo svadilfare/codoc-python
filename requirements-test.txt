@@ -7,5 +7,6 @@ pytest-mypy==0.8.0
 pytest-picked==0.4.6
 pytest-sugar==0.9.4
 pytest-watch==4.2.0
+python-dotenv==0.15.0
 snapshottest==0.6.0
-sphinx==1.8.5
+sphinx==3.0.0

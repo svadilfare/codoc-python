@@ -42,9 +42,6 @@ class CliHandler:
         """
         Publish all graphs in the current package
         """
-        api_key = os.getenv("CODOC_API_KEY")
-        if not api_key:
-            return NO_API_ERROR
 
         sys.path.append(os.getcwd())
         try:
@@ -57,13 +54,18 @@ class CliHandler:
         except Exception as e:
             return f"config could not run bootstrap ({e})"
 
+        api_key = os.getenv("CODOC_API_KEY")
+        if not api_key:
+            return NO_API_ERROR
+
         files = get_all_codoc_files(self._path)
         views = [view for f in files for view in get_views_in_file(f)]
         resp = []
         for view in views:
             resp.append(f"Publishing {view.label}...")
-            link = view(graph=graph, api_key=api_key)
-            resp.append(f"published at {link}")
+            pk = view(graph=graph, api_key=api_key)
+            url = get_url_for_graph(pk)
+            resp.append(f"published at {url}")
 
         return "\n".join(resp)
 
@@ -86,6 +88,10 @@ class CliHandler:
             return "No files found"
         sep = " - "
         return sep + ("\n" + sep).join(f.name for f in files)
+
+
+def get_url_for_graph(pk: int) -> str:
+    return f"https://codoc.org/app/graph/{pk}"
 
 
 def _main():

@@ -48,6 +48,25 @@ One neat reason to use the :ref:`bootstrap` function, is that you can use it to
 prepare your environment. If you are using a framework of sorts, there might be
 a need to bootstrap your code before it can run.
 
+.. _dotenv:
+
+Python dotenv
+---------
+
+We personally like `python-dotenv <https://pypi.org/project/python-dotenv/>`_,
+and it can easily be used for, for instance, your CODOC API key. Simply add it like so:
+
+.. code-block:: python
+
+    import os
+    from dotenv import load_dotenv
+
+    import myproj
+
+
+    def bootstrap():
+        load_dotenv()
+        return create_graph_of_module(myproj)
 .. _django:
 
 Django
