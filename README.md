@@ -1,4 +1,5 @@
 # CODOC Python SDK
+[![Automated Tests](https://github.com/svadilfare/codoc-python/actions/workflows/automated-tests.yml/badge.svg)](https://github.com/svadilfare/codoc-python/actions/workflows/automated-tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/pip/badge/?version=stable)](https://pip.pypa.io/en/stable/?badge=stable)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=svadilfare_codoc-python&metric=coverage&token=87db581f3fdbed3f091a90ed187a1a0cad581529)](https://sonarcloud.io/dashboard?id=svadilfare_codoc-python)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=svadilfare_codoc-python&metric=security_rating&token=87db581f3fdbed3f091a90ed187a1a0cad581529)](https://sonarcloud.io/dashboard?id=svadilfare_codoc-python)

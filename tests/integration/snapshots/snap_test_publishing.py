@@ -37,6 +37,6 @@ snapshots["test_can_publish_graph 1"] = (
                 },
             ],
         },
-        "url": "https://codoc-api-production.herokuapp.com/graphs/org/1/graphs/",
+        "url": "https://api.codoc.org/graphs/",
     },
 )
