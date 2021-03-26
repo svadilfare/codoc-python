@@ -33,7 +33,7 @@ jobs:
         env:
           CODOC_API_KEY: ${{ secrets.CODOC_API_KEY }}
         run: |
-          codoc publish
+          codocpy publish
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
