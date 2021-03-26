@@ -20,6 +20,8 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
 
     .. code-block:: python
 
+        from codoc.service.parsing.node import get_identifier_of_object
+
        identifier = get_identifier_of_object(myproject.subproject)
        filter_function = get_children_of(identifier)
 
@@ -43,6 +45,7 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
         if not keep_external_nodes:
             return Graph(nodes=internal_nodes, edges=edges)
         else:
+            # Also remove `parent_id` for all nodes if parent_id is outside.
             return Graph(
                 nodes={
                     node for node in graph.nodes if is_node_in_edges(node, edges, graph)
@@ -51,6 +54,20 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
             )
 
     return filter_func
+
+
+def remove_parent_if_not_child(
+    node: Node, graph: Graph, allowed_identifier: NodeId
+) -> Node:
+    ...
+    parent_id = node.parent_identifier
+    if not parent_id:
+        return node
+    parent = get_node(node.parent_identifier, graph)
+    if is_node_accepted(parent, graph, allowed_identifier):
+        return node
+
+    raise NotImplementedError()
 
 
 # TODO find a way to cache result, i.e dynamic programming

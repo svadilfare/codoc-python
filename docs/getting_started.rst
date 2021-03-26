@@ -23,8 +23,7 @@ Install ``codocpy``
 
 .. code-block:: bash
 
-    $ codocpy --version
-    codoc-python 1.x.x
+    $ codocpy
 
 .. _`simpleviews`:
 .. _`simpleview`:
@@ -51,7 +50,7 @@ Inside this folder, create a new file called ``codoc_sample.py``:
         """
         This view contains all the modules that our project contain.
         """
-        return filters.exclude_functions(filters.exclude_classes(graph)
+        return filters.exclude_functions(filters.exclude_classes(graph))
 
 
 .. note:: View functions have to be prefixed with `view_`. see :ref:`view_functions`
