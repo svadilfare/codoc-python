@@ -13,6 +13,7 @@ class NodeType(Enum):
     CLASS = auto()
     FUNCTION = auto()
     MODULE = auto()
+    EXCEPTION = auto()
 
 
 NodeId = str

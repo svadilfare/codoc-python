@@ -125,6 +125,8 @@ def get_type(obj: ObjectType) -> NodeType:
         return NodeType.CLASS
 
     if inspect.isclass(obj):
+        if issubclass(obj, BaseException):
+            return NodeType.EXCEPTION
         return NodeType.CLASS
     if getattr(obj, "__module__", "").startswith("typing"):
         return NodeType.CLASS

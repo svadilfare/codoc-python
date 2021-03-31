@@ -15,6 +15,10 @@ snapshots["test_dogfood_match_snapshot 1"] = GenericRepr(
     "Node(identifier='create_node_from_object/NodeType.FUNCTION/codoc.service.parsing.node', name='create_node_from_object', description='', of_type=<NodeType.FUNCTION: 2>, parent_identifier='codoc.service.parsing.node/NodeType.MODULE/codoc.service.parsing', path=None, args=('obj',), lines=None)"
 )
 
+snapshots["test_exception_match_snapshot 1"] = GenericRepr(
+    "Node(identifier='RandomError/NodeType.EXCEPTION/examples', name='RandomError', description='Common base class for all non-exit exceptions.', of_type=<NodeType.EXCEPTION: 4>, parent_identifier='examples/NodeType.MODULE/', path=None, args=None, lines=None)"
+)
+
 snapshots["test_function_match_snapshot 1"] = GenericRepr(
     "Node(identifier='random_function/NodeType.FUNCTION/examples', name='random_function', description='Will output something COMPLETLY random', of_type=<NodeType.FUNCTION: 2>, parent_identifier='examples/NodeType.MODULE/', path=None, args=(), lines=None)"
 )

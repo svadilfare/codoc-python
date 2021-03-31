@@ -13,6 +13,11 @@ def test_function_match_snapshot(examples, snapshot):
     snapshot.assert_match(node)
 
 
+def test_exception_match_snapshot(examples, snapshot):
+    node = create_node_from_object(examples.RandomError)
+    snapshot.assert_match(node)
+
+
 def test_module_match_snapshot(examples, snapshot):
     node = create_node_from_object(examples)
     snapshot.assert_match(node)
