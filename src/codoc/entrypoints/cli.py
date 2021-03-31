@@ -44,11 +44,12 @@ class CliHandler:
     The Command Line Interface for
     the Codoc SDK.
 
+    Mainly used to publish your views. For a complete view
+    Use `codoc -h` for more information and available flags
 
-    Mainly used to publish your views to the webapp.
-    args:
-    --path : a path to the codoc_views folder
-    --report_errors : Use flag to report errors to us
+    Args:
+        path (str): The path to the codoc_views folder
+        report_errors (bool): whether to send errors to the codoc dev team
     """
 
     def __init__(self, path="codoc_views", report_errors=False):
