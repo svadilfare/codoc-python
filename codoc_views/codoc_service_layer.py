@@ -32,7 +32,6 @@ def view_graph_rendering(graph):
     as well as the direct dependencies of
     the internal aspects.
     """
-    raise NotImplementedError()
     return filters.exclude_modules(
         filters.get_children_of(
             get_identifier_of_object(codoc.service.graph), keep_external_nodes=True
