@@ -24,6 +24,19 @@ Please set 'CODOC_API_KEY' as an environmental variable
 
 Alternatively consult the documentation at https://codoc.org
 """
+UNEXPECTED_ERROR = """
+An unexpected error happened.
+
+If you want us to act on this error, then use the `--report_errors` flag :)
+"""
+
+
+def _setup_sentry():
+    import sentry_sdk
+
+    sentry_sdk.init(
+        "https://d4168cc6cb0e44339911e3ede140853e@o522026.ingest.sentry.io/5700616",
+    )
 
 
 class CliHandler:
@@ -33,10 +46,15 @@ class CliHandler:
 
 
     Mainly used to publish your views to the webapp.
+    args:
+    --path : a path to the codoc_views folder
+    --report_errors : Use flag to report errors to us
     """
 
-    def __init__(self, path="codoc_views"):
+    def __init__(self, path="codoc_views", report_errors=False):
         self._path = path
+        if report_errors:
+            _setup_sentry()
 
     def publish(self):
         """
@@ -59,7 +77,12 @@ class CliHandler:
             return NO_API_ERROR
 
         files = get_all_codoc_files(self._path)
-        views = [view for f in files for view in get_views_in_file(f)]
+        try:
+            views = [view for f in files for view in get_views_in_file(f)]
+        except Exception as e:
+            print(e)
+
+            return f"An unexpected error occured: \n {e}"
         resp = []
         for view in views:
             resp.append(f"Publishing {view.label}...")
