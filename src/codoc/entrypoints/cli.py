@@ -88,6 +88,7 @@ class CliHandler:
             except Exception as e:
 
                 error = f"An unexpected error occurred when running `{view.label}` ({error_name(e)})"
+                print(e)
                 if self._report_errors:
                     sentry_sdk.capture_exception(e)
                     sentry_sdk.flush()
