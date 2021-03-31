@@ -9,6 +9,7 @@ Mainly used to publish your views to the webapp.
 import sys
 import os
 import fire
+import sentry_sdk
 
 from codoc.service.finder.files import (
     get_all_codoc_files,
@@ -31,14 +32,6 @@ If you want us to act on this error, then use the `--report_errors` flag :)
 """
 
 
-def _setup_sentry():
-    import sentry_sdk
-
-    sentry_sdk.init(
-        "https://d4168cc6cb0e44339911e3ede140853e@o522026.ingest.sentry.io/5700616",
-    )
-
-
 class CliHandler:
     """
     The Command Line Interface for
@@ -54,6 +47,7 @@ class CliHandler:
 
     def __init__(self, path="codoc_views", report_errors=False):
         self._path = path
+        self._report_errors = report_errors
         if report_errors:
             _setup_sentry()
 
@@ -65,29 +59,40 @@ class CliHandler:
         sys.path.append(os.getcwd())
         try:
             config = get_config(self._path)
+        except KeyboardInterrupt:
+            return "Manual exit"
         except Exception as e:
-            return f"Could not load config ({e})"
+            return f"Could not load config ({error_name(e)})"
 
         try:
             graph = config.bootstrap()
+        except KeyboardInterrupt:
+            return "Manual exit"
         except Exception as e:
-            return f"config could not run bootstrap ({e})"
+            return f"config could not run bootstrap ({error_name(e)})"
 
         api_key = os.getenv("CODOC_API_KEY")
         if not api_key:
             return NO_API_ERROR
 
         files = get_all_codoc_files(self._path)
-        try:
-            views = [view for f in files for view in get_views_in_file(f)]
-        except Exception as e:
-            print(e)
+        views = [view for f in files for view in get_views_in_file(f)]
 
-            return f"An unexpected error occured: \n {e}"
         resp = []
         for view in views:
             resp.append(f"Publishing {view.label}...")
-            pk = view(graph=graph, api_key=api_key)
+            try:
+                pk = view(graph=graph, api_key=api_key)
+            except KeyboardInterrupt:
+                return "Manual exit"
+            except Exception as e:
+
+                error = f"An unexpected error occurred when running `{view.label}` ({error_name(e)})"
+                if self._report_errors:
+                    sentry_sdk.capture_exception(e)
+                    sentry_sdk.flush()
+                    return f"{error}\n\nThe error has been reported"
+                return f"{error}\n\nRerun with `--report_errors` to report the errors"
             url = get_url_for_graph(pk)
             resp.append(f"published at {url}")
 
@@ -124,3 +129,13 @@ def _main():
 
 if __name__ == "__main__":
     _main()
+
+
+def error_name(error):
+    return str(error) or error.__class__.__name__
+
+
+def _setup_sentry():
+    sentry_sdk.init(
+        "https://d4168cc6cb0e44339911e3ede140853e@o522026.ingest.sentry.io/5700616",
+    )

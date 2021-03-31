@@ -31,10 +31,22 @@ def view_graph_rendering(graph):
     This graph showcases the inter dependencies of the graph,
     as well as the direct dependencies of
     the internal aspects.
-    \n\n
     """
+    raise NotImplementedError()
     return filters.exclude_modules(
         filters.get_children_of(
             get_identifier_of_object(codoc.service.graph), keep_external_nodes=True
         )(graph)
     )
+
+
+@view(
+    label="Dependencies of the CLI",
+)
+def view_cli_dependencies(graph):
+    """
+    Here we show the dependencies of the CLI.
+    """
+    return filters.get_children_of(
+        get_identifier_of_object(codoc.entrypoints), keep_external_nodes=True
+    )(graph)
