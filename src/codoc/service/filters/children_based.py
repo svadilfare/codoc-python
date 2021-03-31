@@ -48,7 +48,10 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
             # Also remove `parent_id` for all nodes if parent_id is outside.
             return Graph(
                 nodes={
-                    node for node in graph.nodes if is_node_in_edges(node, edges, graph)
+                    node
+                    for node in graph.nodes
+                    if is_node_in_edges(node, edges, graph)
+                    or is_node_accepted(node, graph, identifier)
                 },
                 edges=edges,
             )
@@ -67,6 +70,7 @@ def remove_parent_if_not_child(
     if is_node_accepted(parent, graph, allowed_identifier):
         return node
 
+    # TODO it should return same node but with parent = null
     raise NotImplementedError()
 
 
