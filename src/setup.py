@@ -10,7 +10,7 @@ except FileNotFoundError:
 
 setup(
     name="codoc-python",
-    version="0.1.4.8",
+    version="0.1.5",
     author="Casper Weiss Bang",
     author_email="casper@svadilfare.dev",
     description="Tool for generating architectural views for the codoc system",
