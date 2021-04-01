@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from typing import Callable, List
-import importlib
 import importlib.util
 import inspect
 from pathlib import Path
@@ -18,7 +17,10 @@ def get_views_in_file(py_file: Path) -> List[CodocView]:
     spec.loader.exec_module(module)
 
     views = [
-        value for key, value in inspect.getmembers(module) if key.startswith("view_")
+        # value for key, value in inspect.getmembers(module) if key.startswith("view_")
+        value
+        for key, value in inspect.getmembers(module)
+        if getattr(value, "__is_codoc_view", False)
     ]
 
     return views

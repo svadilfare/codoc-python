@@ -51,11 +51,7 @@ class Node:
         if other is None:
             return False
         if isinstance(other, Node):
-            return (
-                self.name == other.name
-                and self.of_type == other.of_type
-                and self.parent_identifier == other.parent_identifier
-            )
+            return self.identifier == other.identifier
         return NotImplemented
 
 

@@ -27,10 +27,13 @@ def view(
             publish_func: Optional[Callable] = None,
         ):
             filtered_graph = func(graph)
+            if not isinstance(filtered_graph, Graph):
+                raise ValueError("Return type of '{label}' is not a Graph")
             if not publish_func:
                 publish_func = publish
 
-            if not filtered_graph.nodes:
+            if len(filtered_graph.nodes) == 0:
+                print("FAIL GRAPH: ", filtered_graph)
                 raise ValueError(f"Graph '{label}' has no nodes")
 
             return publish_func(
@@ -44,6 +47,7 @@ def view(
         decorated_function.__name__ = graph_id
 
         decorated_function.__docs__ = description
+        decorated_function.__is_codoc_view = True
 
         # Attributes for logging etc
         decorated_function.graph_id = graph_id

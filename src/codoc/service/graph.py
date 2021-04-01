@@ -23,6 +23,15 @@ def create_graph_of_module(
             obj, include_external_dependencies=include_external_dependencies
         )
     )
+    print(
+        {
+            node.identifier
+            for node in nodes
+            if "domain" in node.name
+            or "domain" in node.identifier
+            or "domain" in (node.parent_identifier or "")
+        }
+    )
     edges = set(
         Dependency(
             from_node=get_identifier_of_object(obj),

@@ -27,6 +27,35 @@ class TestGetChildrenOfFilter:
     def test_includes_filtered_elm(self, filtered_graph, obj_to_filter):
         assert obj_to_filter in filtered_graph.nodes
 
+    class TestExcludeExternalParent:
+        def test_removes_parent(self, parent, filtered_graph):
+            assert parent not in filtered_graph.nodes
+
+        def test_keeps_child(self, child, filtered_graph):
+            assert child in filtered_graph.nodes
+
+        def test_removes_childs_parent_attribute(self, filtered_graph):
+            # there should only be the one node
+            assert len(filtered_graph.nodes) == 1
+            child = list(filtered_graph.nodes)[0]
+            assert child.parent_identifier is None
+
+        @pytest.fixture()
+        def filtered_graph(self, parent, child, graph):
+            return filters.get_children_of(child.identifier)(graph)
+
+        @pytest.fixture()
+        def graph(self, create_graph, child, parent):
+            return create_graph(nodes=[child, parent])
+
+        @pytest.fixture()
+        def child(self, create_node, parent):
+            return create_node(parent=parent, identifier="child")
+
+        @pytest.fixture()
+        def parent(self, create_node):
+            return create_node(identifier="parent")
+
     @pytest.fixture(
         params=[False, True], ids=["Exclude dependencies", "Include dependencies"]
     )

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from typing import Optional, Set
+import dataclasses
 
-from codoc.domain.model import Graph, Node
+from .model import Graph, Node, NodeId
 
 
 class ParentNotFoundException(Exception):
@@ -13,25 +14,25 @@ class ParentNotFoundException(Exception):
 
 
 class NodeIdentifierNotFoundException(Exception):
-    def __init__(self, identifier: str, graph: Graph):
+    def __init__(self, identifier: NodeId, graph: Graph):
         all_identifiers = [n.identifier for n in graph.nodes]
         msg = f"Could not find identifier '{identifier}'\n {all_identifiers=}"
         super().__init__(msg)
 
 
-def get_node(identifier: str, graph: Graph) -> Node:
+def get_node(identifier: NodeId, graph: Graph) -> Node:
     try:
         return next(node for node in graph.nodes if node.identifier == identifier)
     except StopIteration:
         raise NodeIdentifierNotFoundException(identifier, graph)
 
 
-def contains_node(identifier: str, graph: Graph) -> bool:
+def contains_node(identifier: NodeId, graph: Graph) -> bool:
     return any(node.identifier == identifier for node in graph.nodes)
 
 
 def contains_dependency_between(
-    identifier_from: str, identifier_to: str, graph: Graph
+    identifier_from: NodeId, identifier_to: NodeId, graph: Graph
 ) -> bool:
     return any(
         edge.from_node == identifier_from and edge.to_node == identifier_to
@@ -39,11 +40,15 @@ def contains_dependency_between(
     )
 
 
-def has_children(identifier: str, graph: Graph) -> bool:
+def set_parent(node: Node, parent_id: Optional[NodeId]) -> Node:
+    return dataclasses.replace(node, parent_identifier=parent_id)
+
+
+def has_children(identifier: NodeId, graph: Graph) -> bool:
     return any(node.parent_identifier == identifier for node in graph.nodes)
 
 
-def get_children(identifier: str, graph: Graph) -> Set[Node]:
+def get_children(identifier: NodeId, graph: Graph) -> Set[Node]:
     return set(node for node in graph.nodes if node.parent_identifier == identifier)
 
 

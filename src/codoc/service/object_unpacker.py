@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import inspect
 from typing import Set, Tuple
+from pkgutil import iter_modules
+import importlib.util
 
 from codoc.domain.model import Node
 
@@ -10,53 +12,73 @@ from .parsing.utils import is_not_an_instance
 NodeTuple = Tuple[ObjectType, Node]
 
 
-def recursively_get_all_subobjects_in_object(obj: ObjectType):
-    return RecursiveObjectFetcher(obj).get_all_objects_in_object_and_sub_objects()
+def recursively_get_all_subobjects_in_object(obj: ObjectType) -> Set[ObjectType]:
+    sub_objects = get_relevant_objects_in_object(obj)
+    return {obj} | get_all_objects_in_sub_objects(obj, sub_objects) | sub_objects
 
 
-class RecursiveObjectFetcher:
-    def __init__(self, obj: ObjectType):
-        self._obj = obj
-        self._module_name = get_name_of_module(self._obj)
+def get_all_objects_in_sub_objects(
+    obj: ObjectType, sub_objects: Set[ObjectType]
+) -> Set[ObjectType]:
+    return set(
+        sub_sub_obj
+        for sub_obj in sub_objects
+        if is_obj_part_of_module(sub_obj, obj)
+        for sub_sub_obj in recursively_get_all_subobjects_in_object(sub_obj)
+    )
 
-    def get_all_objects_in_object_and_sub_objects(self) -> Set[ObjectType]:
-        return self.get_all_objects_in_sub_objects() | self.get_all_objects()
 
-    def get_all_objects(
-        self,
-    ) -> Set[ObjectType]:
+def get_relevant_objects_in_object(obj: ObjectType) -> Set[ObjectType]:
+    sub_objects = set(
+        with_parentclass_attribute(sub_obj, obj)
+        for name, sub_obj in _get_subobjects(obj)
+        if is_obj_valid_for_return(name, sub_obj, obj)
+    )
+    return sub_objects
 
-        return set(
-            self.denote_parent(obj)
-            for name, obj in inspect.getmembers(self._obj)
-            if self._is_obj_valid_for_return(name, obj)
-        ) | {self._obj}
 
-    def denote_parent(self, obj: ObjectType) -> ObjectType:
-        if inspect.isclass(self._obj):
-            obj.__parentclass__ = self._obj
-        return obj
+def _get_subobjects(obj: ObjectType) -> Set[ObjectType]:
+    for member in inspect.getmembers(obj):
+        yield member
 
-    def get_all_objects_in_sub_objects(self) -> Set[ObjectType]:
-        return set(
-            inner_obj
-            for obj in self.get_all_objects()
-            if self._is_obj_part_of_module(obj) and obj is not self._obj
-            for inner_obj in RecursiveObjectFetcher(
-                obj
-            ).get_all_objects_in_object_and_sub_objects()
-        )
+    if inspect.ismodule(obj) and hasattr(obj, "__path__"):
+        for sub_module in [
+            _load_module(mod)
+            for mod in iter_modules(obj.__path__, prefix=f"{obj.__name__}.")
+        ]:
+            yield sub_module
 
-    def _is_obj_part_of_module(self, obj: ObjectType) -> bool:
-        module_name = get_name_of_module(obj)
-        return module_name is not None and module_name.startswith(self._module_name)
 
-    def _is_obj_valid_for_return(self, name: str, obj: object) -> bool:
-        return (
-            not name.startswith("__")
-            and is_not_an_instance(obj)
-            and self._is_obj_part_of_module(obj)
-        )
+def _load_module(mod) -> ObjectType:
+    name = mod.name
+    spec = mod.module_finder.find_spec(name)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    return name, module
+
+
+def with_parentclass_attribute(obj: ObjectType, parent: ObjectType) -> ObjectType:
+    if inspect.isclass(parent):
+        obj.__parentclass__ = parent
+    return obj
+
+
+def is_obj_valid_for_return(name: str, obj: ObjectType, parent: ObjectType) -> bool:
+    return (
+        not name.startswith("__")
+        and is_not_an_instance(obj)
+        and is_obj_part_of_module(obj, parent)
+    )
+
+
+# test functions individually
+def is_obj_part_of_module(obj: ObjectType, parent: ObjectType) -> bool:
+    module_name = get_name_of_module(obj)
+    parent_name = get_name_of_module(parent)
+    if "domain" in parent_name:
+        print(parent_name, module_name)
+    return module_name is not None and module_name.startswith(parent_name)
 
 
 def get_name_of_module(obj: object) -> str:

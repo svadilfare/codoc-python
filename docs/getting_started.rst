@@ -62,7 +62,7 @@ Create a config
 -----------------------
 
 You will also need a basic config file in the same folder, called
-``codoconf.py``, so codocpy knows what project you want to analyze:
+``conf.py`` in your views folder, so codocpy knows what project you want to analyze:
 
 .. code-block:: python
 

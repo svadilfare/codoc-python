@@ -1,7 +1,7 @@
 # /usr/bin/env python3
 from typing import Set
 from codoc.domain.model import Graph, Node, NodeId, Dependency
-from codoc.domain.helpers import get_node, get_children
+from codoc.domain.helpers import get_node, get_children, set_parent
 from .types import FilterType
 
 
@@ -37,18 +37,28 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
         internal_nodes = {
             node for node in graph.nodes if is_node_accepted(node, graph, identifier)
         }
+        internal_node_identifiers = {node.identifier for node in internal_nodes}
         edges = {
             edge
             for edge in graph.edges
-            if is_edge_accepted(edge, internal_nodes, keep_external_nodes)
+            if is_edge_accepted(edge, internal_node_identifiers, keep_external_nodes)
         }
         if not keep_external_nodes:
-            return Graph(nodes=internal_nodes, edges=edges)
-        else:
-            # Also remove `parent_id` for all nodes if parent_id is outside.
             return Graph(
                 nodes={
-                    node
+                    remove_parent_if_parent_is_discarded(
+                        node, internal_node_identifiers
+                    )
+                    for node in internal_nodes
+                },
+                edges=edges,
+            )
+        else:
+            # Also remove `parent_id` for all nodes if parent_id is outside.
+            # TODO keep parent if child is in graph
+            return Graph(
+                nodes={
+                    remove_parent_if_parent_is_discarded(node, internal_nodes)
                     for node in graph.nodes
                     if is_node_in_edges(node, edges, graph)
                     or is_node_accepted(node, graph, identifier)
@@ -59,19 +69,13 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
     return filter_func
 
 
-def remove_parent_if_not_child(
-    node: Node, graph: Graph, allowed_identifier: NodeId
+def remove_parent_if_parent_is_discarded(
+    node: Node, node_identifiers: Set[str]
 ) -> Node:
-    ...
     parent_id = node.parent_identifier
-    if not parent_id:
-        return node
-    parent = get_node(node.parent_identifier, graph)
-    if is_node_accepted(parent, graph, allowed_identifier):
-        return node
-
-    # TODO it should return same node but with parent = null
-    raise NotImplementedError()
+    if parent_id is not None and parent_id not in node_identifiers:
+        return set_parent(node, None)
+    return node
 
 
 # TODO find a way to cache result, i.e dynamic programming
@@ -90,18 +94,14 @@ def is_node_accepted(node: Node, graph: Graph, allowed_identifier: NodeId) -> bo
 
 
 def is_edge_accepted(
-    edge: Dependency, nodes: Set[Node], keep_external_nodes: bool
+    edge: Dependency, node_identifiers: Set[str], keep_external_nodes: bool
 ) -> bool:
-    is_from_node_internal = identifier_in_nodes(edge.from_node, nodes)
-    is_to_node_internal = identifier_in_nodes(edge.to_node, nodes)
+    is_from_node_internal = edge.from_node in node_identifiers
+    is_to_node_internal = edge.to_node in node_identifiers
     if keep_external_nodes:
         return is_from_node_internal or is_to_node_internal
     else:
         return is_from_node_internal and is_to_node_internal
-
-
-def identifier_in_nodes(identifier: NodeId, nodes: Set[Node]) -> bool:
-    return any(identifier == node.identifier for node in nodes)
 
 
 def is_node_in_edges(node: Node, edges: Set[Dependency], graph: Graph) -> bool:

@@ -43,12 +43,16 @@ def assert_match_snap(snapshot):
 @pytest.fixture
 def create_node():
     def _func(**kwargs):
+        kwargs.setdefault("identifier", "A")
         kwargs.setdefault("name", "test")
         kwargs.setdefault("description", "test")
         kwargs.setdefault("path", None)
         kwargs.setdefault("args", None)
         kwargs.setdefault("lines", None)
         kwargs.setdefault("of_type", NodeType.CLASS)
+        if "parent" in kwargs:
+            kwargs.setdefault("parent_identifier", kwargs["parent"].identifier)
+            del kwargs["parent"]
         kwargs.setdefault("parent_identifier", None)
         return Node(**kwargs)
 

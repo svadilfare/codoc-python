@@ -2,10 +2,11 @@
 from typing import Set
 from pathlib import Path
 
-allowed_prefixes = ["codoc_", "view_", "codocs_"]
+allowed_prefixes = ["codoc_", "view_", "codocs_", "views_"]
 
 
 def get_all_codoc_files(path: str = None) -> Set[Path]:
+    # return get_all_python_files(path)
     return {f for f in get_all_python_files(path) if is_codoc_file(f)}
 
 

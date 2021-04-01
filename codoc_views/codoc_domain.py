@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import codoc.domain.model
+import codoc.domain
+import codoc.domain.helpers
 from codoc.service import filters
 from codoc.service.export.codoc_view import view
 from codoc.service.parsing.node import get_identifier_of_object
@@ -22,3 +24,14 @@ def view_domain_model(graph):
     )(graph)
 
     return filters.class_diagram_filter(graph)
+
+
+@view(
+    label="Domain",
+)
+def view_domain(graph):
+    graph = filters.get_children_of(
+        get_identifier_of_object(codoc.domain), keep_external_nodes=False
+    )(graph)
+
+    return graph
