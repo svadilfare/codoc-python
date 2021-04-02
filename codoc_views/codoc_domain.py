@@ -10,7 +10,7 @@ from codoc.service.parsing.node import get_identifier_of_object
 @view(
     label="Domain Model",
 )
-def view_domain_model(graph):
+def domain_model(graph):
     """
     This view presents the basic domain model of the
     [Codoc](https://codoc.org/) system.
@@ -29,7 +29,7 @@ def view_domain_model(graph):
 @view(
     label="Domain",
 )
-def view_domain(graph):
+def domain(graph):
     graph = filters.get_children_of(
         get_identifier_of_object(codoc.domain), keep_external_nodes=False
     )(graph)

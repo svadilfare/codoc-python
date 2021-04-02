@@ -85,7 +85,7 @@ from codoc.service.export.codoc_view import view
 from codoc.service import filters
 
 @view(label="My Graph")
-def view_domain_classes(graph):
+def domain_classes(graph):
     return filters.class_diagram_filter(graph)
 
 @view(label="My Graph2")

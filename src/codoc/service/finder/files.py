@@ -2,17 +2,6 @@
 from typing import Set
 from pathlib import Path
 
-allowed_prefixes = ["codoc_", "view_", "codocs_", "views_"]
-
-
-def get_all_codoc_files(path: str = None) -> Set[Path]:
-    # return get_all_python_files(path)
-    return {f for f in get_all_python_files(path) if is_codoc_file(f)}
-
-
-def is_codoc_file(f: Path) -> bool:
-    return any(f.name.startswith(prefix) for prefix in allowed_prefixes)
-
 
 def get_all_python_files(path: str = None) -> Set[Path]:
     return {f for f in get_all_files(path) if f.suffix == ".py"}
@@ -25,8 +14,16 @@ def get_all_files(path: str = None) -> Set[Path]:
     files = set()
     while folders:
         folder = folders.pop()
-        children = {f for f in Path(folder).iterdir()}
+        try:
+            children = {f for f in Path(folder).iterdir()}
+        except FileNotFoundError:
+            raise CodocFolderNotFound(path)
 
         folders |= {f for f in children if f.is_dir()}
         files |= {f for f in children if f.is_file()}
     return files
+
+
+class CodocFolderNotFound(Exception):
+    def __init__(self, path):
+        super().__init__(f"codoc_views folder '{path}' not found in current directory")

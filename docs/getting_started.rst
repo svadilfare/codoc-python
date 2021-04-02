@@ -9,7 +9,7 @@ Getting started
 
 ``codocpy`` requires: Python 3.6, 3.7, 3.8, 3.9.
 
-Install ``codocpy``
+Install ``codoc-python``
 ----------------------------------------
 
 
@@ -46,14 +46,14 @@ Inside this folder, create a new file called ``codoc_sample.py``:
     @view(
         label="Module View",
     )
-    def view_modules(graph):
+    def modules(graph):
         """
         This view contains all the modules that our project contain.
         """
         return filters.exclude_functions(filters.exclude_classes(graph))
 
 
-.. note:: View functions have to be prefixed with `view_`. see :ref:`view_functions`
+.. note:: All codoc view files have to be prefixed with ``codoc_``
 
 .. _`simple_config`:
 .. _`first_config`:

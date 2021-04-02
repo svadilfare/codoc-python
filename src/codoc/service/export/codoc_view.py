@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from codoc.service.parsing.node import get_name, get_parent_of_object, get_description
+from codoc.service.parsing.node import get_name, get_description
 
 from codoc.domain.model import Graph
 from typing import Optional, Callable
@@ -33,7 +33,6 @@ def view(
                 publish_func = publish
 
             if len(filtered_graph.nodes) == 0:
-                print("FAIL GRAPH: ", filtered_graph)
                 raise ValueError(f"Graph '{label}' has no nodes")
 
             return publish_func(
@@ -60,10 +59,6 @@ def view(
 
 
 def get_id(func) -> str:
-    parent = get_parent_of_object(func)
-    if parent:
-        prefix = get_id(parent) + "."
-    else:
-        prefix = ""
+    prefix = getattr(func, "__module__", "root")
 
-    return prefix + get_name(func)
+    return f"{prefix}.{get_name(func)}"

@@ -38,7 +38,7 @@ def get_identifier_of_object(obj: ObjectType) -> str:
     try:
         hash_id = hex(zlib.adler32(inspect.getsource(obj)))[2:]
     except (TypeError, OSError):
-        # This is a sutiable backup.
+        # This is a suitable backup.
         # If we cannot find the source, it's probably
         # because the element is a builtin,
         # and the parent is then a fine hash.

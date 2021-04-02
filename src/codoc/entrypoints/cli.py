@@ -10,15 +10,14 @@ import sys
 import os
 import fire
 import sentry_sdk
+import logging
 
-from codoc.service.finder.files import (
-    get_all_codoc_files,
-)
 
 from codoc.service.finder.config import get_config
 
-from codoc.service.finder.views import get_views_in_file, get_views_in_folder
+from codoc.service.finder.views import get_views_in_folder
 
+logger = logging.getLogger(__name__)
 NO_API_ERROR = """
 API Key is not supplied.
 Please set 'CODOC_API_KEY' as an environmental variable
@@ -43,10 +42,20 @@ class CliHandler:
     Args:
         path (str): The path to the codoc_views folder
         report_errors (bool): whether to send errors to the codoc dev team
+        silent (bool): Whether to display logging messages
+        raise_errors (bool): Whether to raise errors or print friendly errors
     """
 
-    def __init__(self, path="codoc_views", report_errors=False):
+    def __init__(
+        self, path="codoc_views", report_errors=False, silent=False, raise_errors=False
+    ):
         self._path = path
+        if not silent:
+            logging.basicConfig(
+                format="%(message)s",
+                encoding="utf-8",
+                level=logging.INFO,
+            )
         self._report_errors = report_errors
         if report_errors:
             _setup_sentry()
@@ -62,40 +71,46 @@ class CliHandler:
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:
+            if self._report_errors:
+                sentry_sdk.capture_exception(e)
+                sentry_sdk.flush()
             return f"Could not load config ({error_name(e)})"
 
+        logger.info("Starting to bootstrap")
         try:
             graph = config.bootstrap()
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:
-            return f"config could not run bootstrap ({error_name(e)})"
+            if self._report_errors:
+                sentry_sdk.capture_exception(e)
+                sentry_sdk.flush()
+            return f"Could not run bootstrap ({error_name(e)})"
+        logger.info("Graph loaded")
 
         api_key = os.getenv("CODOC_API_KEY")
         if not api_key:
             return NO_API_ERROR
 
-        files = get_all_codoc_files(self._path)
-        views = [view for f in files for view in get_views_in_file(f)]
+        logger.info("Loading views")
+        views = get_views_in_folder(self._path)
 
         resp = []
         for view in views:
-            resp.append(f"Publishing {view.label}...")
+            logger.info(f"Publishing {view.label}...")
             try:
                 pk = view(graph=graph, api_key=api_key)
             except KeyboardInterrupt:
                 return "Manual exit"
             except Exception as e:
-
                 error = f"An unexpected error occurred when running `{view.label}` ({error_name(e)})"
-                print(e)
                 if self._report_errors:
                     sentry_sdk.capture_exception(e)
                     sentry_sdk.flush()
                     return f"{error}\n\nThe error has been reported"
                 return f"{error}\n\nRerun with `--report_errors` to report the errors"
             url = get_url_for_graph(pk)
-            resp.append(f"published at {url}")
+            resp.append(f"'{view.label}' published at:\n{url}")
 
         return "\n".join(resp)
 
@@ -108,16 +123,6 @@ class CliHandler:
             return "No views found"
         sep = " - "
         return sep + ("\n" + sep).join(v.__name__ for v in views)
-
-    def list_files(self):
-        """
-        returns a list of all the codoc related files found.
-        """
-        files = get_all_codoc_files(self._path)
-        if not files:
-            return "No files found"
-        sep = " - "
-        return sep + ("\n" + sep).join(f.name for f in files)
 
 
 def get_url_for_graph(pk: int) -> str:

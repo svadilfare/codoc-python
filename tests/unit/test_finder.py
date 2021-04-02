@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from codoc.service.finder.files import (
     get_all_files,
-    get_all_codoc_files,
     get_all_python_files,
 )
 from codoc.service.finder.views import (
@@ -49,33 +48,6 @@ def test_get_all_python_files__ignores_non_py_files(tmp_path):
     f.write_text(CONTENT)
 
     assert not get_all_python_files(tmp_path)
-
-
-def test_get_all_codoc_files__ignores_non_py_files(tmp_path):
-    folder = tmp_path / "codoc_views"
-    folder.mkdir()
-    f = folder / "view_domain_model.txt"
-    f.write_text(CONTENT)
-
-    assert not get_all_codoc_files(tmp_path)
-
-
-def test_get_all_codoc_files__ignores_non_codoc_files(tmp_path):
-    folder = tmp_path / "codoc_views"
-    folder.mkdir()
-    f = folder / "test_domain_model.py"
-    f.write_text(CONTENT)
-
-    assert not get_all_codoc_files(tmp_path)
-
-
-def test_get_all_codoc_files(tmp_path):
-    folder = tmp_path / "codoc_views"
-    folder.mkdir()
-    f = folder / "codoc_domain_model.py"
-    f.write_text(CONTENT)
-
-    assert f in get_all_codoc_files(tmp_path)
 
 
 def test_get_views_in_file(snapshot, tmp_path, codoc_view_file_content):

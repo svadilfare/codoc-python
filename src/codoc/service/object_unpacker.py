@@ -76,8 +76,6 @@ def is_obj_valid_for_return(name: str, obj: ObjectType, parent: ObjectType) -> b
 def is_obj_part_of_module(obj: ObjectType, parent: ObjectType) -> bool:
     module_name = get_name_of_module(obj)
     parent_name = get_name_of_module(parent)
-    if "domain" in parent_name:
-        print(parent_name, module_name)
     return module_name is not None and module_name.startswith(parent_name)
 
 
