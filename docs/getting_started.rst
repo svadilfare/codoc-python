@@ -112,7 +112,7 @@ You can now publish your views:
 
     $ codocpy publish
     Publishing Module View...
-    published at https://codoc.org/app/view/123
+    published at https://codoc.org/app/view/181
 
 
 
