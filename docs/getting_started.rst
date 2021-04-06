@@ -117,7 +117,7 @@ You can now publish your views:
 
 
 Your view is now published, and you can view at the returned domain (in our
-example https://codoc.org/app/view/123) which shows a public example from our
+example https://codoc.org/app/graph/181) which shows a public example from our
 `sample project <https://github.com/svadilfare/codoc-python-example>`_
 
 .. seealso::
