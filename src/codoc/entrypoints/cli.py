@@ -50,6 +50,8 @@ class CliHandler:
         self, path="codoc_views", report_errors=False, silent=False, raise_errors=False
     ):
         self._path = path
+
+        self._raise_errors = raise_errors
         if not silent:
             logging.basicConfig(
                 format="%(message)s",
@@ -71,6 +73,8 @@ class CliHandler:
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:
+            if self._raise_errors:
+                raise e
             if self._report_errors:
                 sentry_sdk.capture_exception(e)
                 sentry_sdk.flush()
@@ -82,6 +86,8 @@ class CliHandler:
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:
+            if self._raise_errors:
+                raise e
             if self._report_errors:
                 sentry_sdk.capture_exception(e)
                 sentry_sdk.flush()
@@ -103,6 +109,8 @@ class CliHandler:
             except KeyboardInterrupt:
                 return "Manual exit"
             except Exception as e:
+                if self._raise_errors:
+                    raise e
                 error = f"An unexpected error occurred when running `{view.label}` ({error_name(e)})"
                 if self._report_errors:
                     sentry_sdk.capture_exception(e)
