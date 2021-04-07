@@ -62,9 +62,13 @@ class CliHandler:
         if report_errors:
             _setup_sentry()
 
-    def publish(self):
+    def publish(self, strict_mode: bool = False):
         """
         Publish all graphs in the current package
+
+        Args:
+            strict_mode (bool): Whether to terminate if dependency cannot be resolved.
+
         """
 
         sys.path.append(os.getcwd())
@@ -82,7 +86,14 @@ class CliHandler:
 
         logger.info("Starting to bootstrap")
         try:
-            graph = config.bootstrap()
+            try:
+                graph = config.bootstrap(strict_mode=strict_mode)
+                # TODO
+            except TypeError:
+                logger.warning(
+                    "Please pass kwargs into bootstrap! this will be deprecated soon!"
+                )
+                graph = config.bootstrap()
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:

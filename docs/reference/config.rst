@@ -34,9 +34,9 @@ versions could be by utilizing :ref:`filters`, i.e:
 
     import myproject
 
-    def bootstrap():
+    def bootstrap(**kwargs):
         graph = create_graph_of_module(myproject)
-        return filters.exclude_functions(graph**
+        return filters.exclude_functions(graph, **kwargs)
 
 
 .. _prep_env:
@@ -51,7 +51,7 @@ a need to bootstrap your code before it can run.
 .. _dotenv:
 
 Python dotenv
----------
+-------------
 
 We personally like `python-dotenv <https://pypi.org/project/python-dotenv/>`_,
 and it can easily be used for, for instance, your CODOC API key. Simply add it like so:
@@ -64,9 +64,9 @@ and it can easily be used for, for instance, your CODOC API key. Simply add it l
     import myproj
 
 
-    def bootstrap():
+    def bootstrap(**kwargs):
         load_dotenv()
-        return create_graph_of_module(myproj)
+        return create_graph_of_module(myproj, (**kwargs)
 .. _django:
 
 Django
@@ -84,7 +84,7 @@ backend, which is also written in django:
     from codoc.service.graph import create_graph_of_module
 
 
-    def bootstrap():
+    def bootstrap(**kwargs):
 
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
         import django
@@ -92,7 +92,7 @@ backend, which is also written in django:
         django.setup()
         import organizations
 
-        return create_graph_of_module(organizations)
+        return create_graph_of_module(organizations, **kwargs)
 
 
 An important note with django is that you don't, in the same fashion, have a
@@ -105,7 +105,7 @@ can be combined. We do something like this, in our application:
     from codoc.service.graph import create_graph_of_module
 
 
-    def bootstrap():
+    def bootstrap(**kwargs):
 
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
         import django
@@ -115,6 +115,7 @@ can be combined. We do something like this, in our application:
         import graphs
 
 
-        return create_graph_of_module(organizations) | create_graph_of_module(graphs)
+        return create_graph_of_module(organizations, **kwargs) |
+        create_graph_of_module(graphs ,**kwargs)
 
 And you can then add all the modules you have that are relevant.

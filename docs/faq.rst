@@ -26,23 +26,64 @@ In the future, it will also make it possible to include information regarding
 the path your code takes when running tests.
 
 
+.. _side_effects:
+
+Dangerous side effects!
+---------------------------
+
+Codocpy relies on dynamic analysis (see :ref:`dynamic_analysis`), which is both
+good and bad. We strongly advise that you don't have any production api keys or
+anything set up, in the environment you run codoc in. Codoc is much like
+automated tests. If your tests executes code that sends emails, then codoc might
+do it too. It's a bit different, but codoc will import all your files into
+memory, and if your code is written improperly, then that means side effects.
+
+This can happen if codocpy imports a file that doesn't
+`define a __main__ function <https://realpython.com/python-main-function/>`_  correctly, and then
+either exits or something similar. Essentially, if you have a python file
+which executes python code on import, then dont run codoc. Rewrite your code.
+It's bad practice.
+
+**TL;DR**
+Do this
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+    # scripts/myfile.py
+    if __name__ == "__main__":
+        users = get_users()
+        for user in users
+            send_spam_email(user)
+
+Not this
+~~~~~~~~~~~~~~~~~~~~~~~
+.. warning:: DONT DO THE FOLLOWING
+.. code-block:: bash
+
+    # scripts/myfile.py
+    users = get_users()
+    for user in users
+        send_spam_email(user)
+
+.. _it_crashed:
 
 It crashed!
 ---------------------------
-
-That isn't really a question but okay.
+This might be due to the quality of your code, and I mean that in the nicest way
+possible.
 
 Codocpy relies on dynamic analysis (see :ref:`dynamic_analysis`), which means
 that if your code crashes, then codoc crashes. There can be a bunch of different
 reasons. We recommend you read :ref:`prep_env` and make sure it is setup correctly.
 
-Another possible problem is side-effects in your code base. This can happen if
-codocpy imports a file that doesn't `define a __main__ function <https://realpython.com/python-main-function/>`_  correctly, and then
-either exits or something similar. This can happen if you have a python file
-which executes python code on import. Don't do that :)
+You can run codocpy with the ``raise_errors`` for more information, if the error
+message isn't helpful. (``codocpy publish --raise_errors``).
 
-If you have circular dependencies, that will make codocpy crash too, due to
-python not handling it.
+Another possible problem is side-effects in your code base. See :ref:`side_effects`.
+
+If you have circular dependencies, that will make codocpy crash some times, due
+to python crashing.
 
 We try our best at providing meaningful messages, where possible, however it
 might be difficult at times. Codoc is a sensitive framework, but it will help

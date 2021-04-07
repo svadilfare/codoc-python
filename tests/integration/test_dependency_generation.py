@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import pytest
+import logging
 
 from codoc.service.parsing.node import get_identifier_of_object
 from codoc.service.parsing.dependency import (
     get_dependency_edges,
     get_dependency_nodes_with_parents,
     get_dependency_nodes,
+    DependencyNotFound,
 )
 
 
@@ -21,6 +23,17 @@ def test_get_dependency_nodes_with_parents_match_snapshot(
 
 def test_get_dependency_nodes_match_snapshot(examples, assert_match_snap, kwargs):
     assert_match_snap(get_dependency_nodes(**kwargs))
+
+
+def test_get_dependencies_raises_error_in_strictmode():
+    with pytest.raises(DependencyNotFound):
+        get_dependency_nodes(function_that_fails_under_strict_mode)
+
+
+def test_get_dependencies_shows_warning_in_strictmode(caplog):
+    caplog.set_level(logging.WARNING)
+    get_dependency_nodes(function_that_fails_under_strict_mode, strict_mode=False)
+    assert "pytest.UndefinedThing" in caplog.text
 
 
 @pytest.fixture(
@@ -44,3 +57,8 @@ def obj(request, examples):
         return examples.random_function
     if request.param == 3:
         return examples
+
+
+def function_that_fails_under_strict_mode():
+    # This will fail in strict mode as it cannot find `UndefinedThing`
+    return pytest.UndefinedThing()

@@ -72,7 +72,6 @@ class Dependency:
 @dataclass(frozen=True)
 class Graph:
     """
-
     A Graph is the base element of the system.
     It contains both edges (Dependencies) as well as nodes (classes, functions, etc).
 

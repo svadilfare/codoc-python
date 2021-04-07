@@ -23,6 +23,14 @@ class UnexpectedBuiltinError(Exception):
     ...
 
 
+class DependencyNotFound(Exception):
+    def __init__(self, obj, attr_name, module):
+        module_name = getattr(module, "__file__", str(module))
+        super().__init__(
+            f"Could not find `{attr_name}` in `{obj}` (in file {module_name})"
+        )
+
+
 def get_dependency_nodes(
     obj: ObjectType,
     **kwargs,
@@ -61,6 +69,7 @@ def bootstrap_kwargs(kwargs):
     kwargs.setdefault("create_node", create_node_from_object)
     kwargs.setdefault("get_parent", get_parent_of_object)
     kwargs.setdefault("include_external_dependencies", True)
+    kwargs.setdefault("strict_mode", True)
     return kwargs
 
 
@@ -75,6 +84,7 @@ class DependencyInspector:
         create_node: Callable[[ObjectType], Node],
         get_parent: Callable[[ObjectType], ObjectType],
         include_external_dependencies: bool,
+        strict_mode: bool,
     ):
         if is_builtin(obj):
             raise UnexpectedBuiltinError()
@@ -86,6 +96,7 @@ class DependencyInspector:
         self.create_node = create_node
         self.get_parent = get_parent
         self._include_external_dependencies = include_external_dependencies
+        self._strict_mode = strict_mode
         self._node = create_node(obj)
         self._module = inspect.getmodule(self._obj)
 
@@ -145,14 +156,17 @@ class DependencyInspector:
         except AttributeError:
             pass
         try:
-            return _recursively_get_member_in_object_matching_identifier_name(
+            return self._recursively_get_member_in_object_matching_identifier_name(
                 identifier, self._module
             )
-        except AttributeError:
-            logger.error(
-                f"AttributeError when trying to fetch '{identifier}' when analyzing '{self._obj}'"
-            )
-            raise
+        except DependencyNotFound:
+            if self._strict_mode:
+                raise
+            else:
+                logger.warning(
+                    f"Could not find '{identifier}' in '{self._node.name}'({self._node.path})"
+                    "(skipping due to non-strict mode)"
+                )
 
     def get_referenced_identifier_names(self) -> Set[str]:
         try:
@@ -185,32 +199,31 @@ class DependencyInspector:
         else:
             return {parent} | self.recursively_get_parents(parent)
 
-
-def _recursively_get_member_in_object_matching_identifier_name(
-    identifier: str, current_object: ObjectType
-) -> Optional[ObjectType]:
-    split_identifier = identifier.split(".")
-    if len(split_identifier) == 1:
+    def _recursively_get_member_in_object_matching_identifier_name(
+        self, identifier: str, current_object: ObjectType
+    ) -> Optional[ObjectType]:
+        split_identifier = identifier.split(".")
+        if len(split_identifier) == 1:
+            try:
+                return getattr(current_object, identifier)
+            except AttributeError as e:
+                return handle_attribute_error_in_object_inspection(
+                    e, identifier, current_object, self._module
+                )
+        sub_identifier = ".".join(split_identifier[1:])
         try:
-            return getattr(current_object, identifier)
+            new_object = getattr(current_object, split_identifier[0])
+            return self._recursively_get_member_in_object_matching_identifier_name(
+                sub_identifier, new_object
+            )
         except AttributeError as e:
             return handle_attribute_error_in_object_inspection(
-                e, identifier, current_object
+                e, split_identifier[0], current_object, self._module
             )
-    sub_identifier = ".".join(split_identifier[1:])
-    try:
-        new_object = getattr(current_object, split_identifier[0])
-        return _recursively_get_member_in_object_matching_identifier_name(
-            sub_identifier, new_object
-        )
-    except AttributeError as e:
-        return handle_attribute_error_in_object_inspection(
-            e, split_identifier[0], current_object
-        )
 
 
 def handle_attribute_error_in_object_inspection(
-    error: Exception, identifier: str, current_object: ObjectType
+    error: Exception, identifier: str, current_object: ObjectType, module
 ) -> Optional[ObjectType]:
     # Handle special cases - i.e subprocess having OS specific parts
     if current_object in [subprocess, os]:
@@ -227,4 +240,5 @@ def handle_attribute_error_in_object_inspection(
             "Assuming that you are shadowing a builtin."
         )
         return None
-    raise error
+
+    raise DependencyNotFound(current_object, identifier, module) from error

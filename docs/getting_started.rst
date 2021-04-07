@@ -53,7 +53,6 @@ Inside this folder, create a new file called ``codoc_sample.py``:
         return filters.exclude_functions(filters.exclude_classes(graph))
 
 
-.. note:: All codoc view files have to be prefixed with ``codoc_``
 
 .. _`simple_config`:
 .. _`first_config`:
@@ -70,8 +69,8 @@ You will also need a basic config file in the same folder, called
 
     import myproject
 
-    def bootstrap():
-        return create_graph_of_module(myproject)
+    def bootstrap(**kwargs):
+        return create_graph_of_module(myproject, **kwargs)
 
 .. note:: Using django? Please see :ref:`django` to bootstrap that correctly.
 
@@ -87,6 +86,10 @@ You can verify that codoc can find your views:
 
 Publishing your view
 ----------------------------------------------------------
+
+.. warning:: Codoc will load all your code, and by effect execute all
+             side-effects! Make sure you don't have files that execute critical
+             code on import! see :ref:`side_effects` for more info.
 
 By now we hope you are already `signed up
 <https://codoc.org/signup/?utm_source=readthedocs&utm_medium=post&utm_campaign=info>`_
@@ -115,6 +118,8 @@ You can now publish your views:
     published at https://codoc.org/app/view/181
 
 
+.. note:: Did it failed? Codoc is a bit sensitive, sadly. Read :ref:`it_crashed`
+          for what to do.
 
 Your view is now published, and you can view at the returned domain (in our
 example https://codoc.org/app/graph/181) which shows a public example from our
