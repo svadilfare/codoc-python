@@ -6,6 +6,6 @@ from dotenv import load_dotenv
 import codoc
 
 
-def bootstrap():
+def bootstrap(**kwargs):
     load_dotenv()
-    return create_graph_of_module(codoc)
+    return create_graph_of_module(codoc, **kwargs)

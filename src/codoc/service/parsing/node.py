@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import importlib
 import zlib
+import os
 import inspect
 import logging
 from typing import Optional, Tuple
@@ -62,11 +63,12 @@ def get_args(obj: ObjectType) -> Optional[Tuple[str, ...]]:
 
 
 def get_path(obj: ObjectType) -> Optional[str]:
-    return None
-    # TODO reenable when we get a relative path, not including home etc.
-    # TODO or simply use another node_creator when running tests
     try:
-        return inspect.getfile(obj)
+        abs_path = inspect.getfile(obj)
+
+        cwd = os.getcwd()
+        relative_path = os.path.relpath(abs_path, cwd)
+        return relative_path
     except TypeError:
         return None
 
