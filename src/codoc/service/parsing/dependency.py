@@ -31,6 +31,13 @@ class DependencyNotFound(Exception):
         )
 
 
+class ObjectHasNoModule(Exception):
+    def __init__(self, node):
+        super().__init__(
+            f"`{node.name}`({node.path}) has no module, so dependencies cannot be found."
+        )
+
+
 def get_dependency_nodes(
     obj: ObjectType,
     **kwargs,
@@ -39,7 +46,10 @@ def get_dependency_nodes(
     Returns all direct dependencies of the input object
     """
     kwargs = bootstrap_kwargs(kwargs)
-    return DependencyInspector(obj, **kwargs).get_dependency_nodes()
+    try:
+        return DependencyInspector(obj, **kwargs).get_dependency_nodes()
+    except UnexpectedBuiltinError:
+        return set()
 
 
 def get_dependency_nodes_with_parents(
@@ -51,7 +61,10 @@ def get_dependency_nodes_with_parents(
     and the parents of those dependencies
     """
     kwargs = bootstrap_kwargs(kwargs)
-    return DependencyInspector(obj, **kwargs).get_dependency_nodes_and_parents()
+    try:
+        return DependencyInspector(obj, **kwargs).get_dependency_nodes_and_parents()
+    except UnexpectedBuiltinError:
+        return set()
 
 
 def get_dependency_edges(
@@ -62,7 +75,10 @@ def get_dependency_edges(
     Returns the edges that reflect the dependencies of the input object
     """
     kwargs = bootstrap_kwargs(kwargs)
-    return DependencyInspector(obj, **kwargs).get_dependencies()
+    try:
+        return DependencyInspector(obj, **kwargs).get_dependencies()
+    except UnexpectedBuiltinError:
+        return set()
 
 
 def bootstrap_kwargs(kwargs):
@@ -150,7 +166,9 @@ class DependencyInspector:
 
     def get_object_from_module(self, identifier: str) -> Optional[ObjectType]:
         if self._module is None:
-            raise NotImplementedError(f"{self._obj} has no module")
+            error = ObjectHasNoModule(self._node)
+            self._raise_error(error)
+            return None
         try:
             return getattr(builtins, identifier)
         except AttributeError:
@@ -159,14 +177,15 @@ class DependencyInspector:
             return self._recursively_get_member_in_object_matching_identifier_name(
                 identifier, self._module
             )
-        except DependencyNotFound:
-            if self._strict_mode:
-                raise
-            else:
-                logger.warning(
-                    f"Could not find '{identifier}' in '{self._node.name}'({self._node.path})"
-                    "(skipping due to non-strict mode)"
-                )
+        except DependencyNotFound as e:
+            self._raise_error(e)
+            return None
+
+    def _raise_error(self, error):
+        if self._strict_mode:
+            raise error
+        else:
+            logger.warning(error)
 
     def get_referenced_identifier_names(self) -> Set[str]:
         try:

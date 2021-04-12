@@ -33,7 +33,7 @@ Install ``codoc-python``
 Create your first View
 -----------------------
 
-We suggest to group your views into a single folder called ``codoc_views``. This
+We suggest grouping your views into a single folder called ``codoc_views``. This
 is the default folder that ``codocpy`` will look for.
 
 Inside this folder, create a new file called ``codoc_sample.py``:
@@ -48,7 +48,7 @@ Inside this folder, create a new file called ``codoc_sample.py``:
     )
     def modules(graph):
         """
-        This view contains all the modules that our project contain.
+        This view contains all the modules that our project contains.
         """
         return filters.exclude_functions(filters.exclude_classes(graph))
 
