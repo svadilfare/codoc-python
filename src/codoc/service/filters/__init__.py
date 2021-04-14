@@ -6,6 +6,7 @@ viewer friendly.
 """
 from .class_diagram import class_diagram_filter
 from .children_based import get_children_of
+from .depth_based import get_depth_based_filter
 from .type_exclusion_filter import exclude_classes, exclude_functions, exclude_modules
 
 
@@ -15,4 +16,5 @@ __all__ = [
     "exclude_functions",
     "exclude_modules",
     "get_children_of",
+    "get_depth_based_filter",
 ]

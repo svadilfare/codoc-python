@@ -3,6 +3,10 @@ from typing import Set
 from codoc.domain.model import Graph, Node, NodeId, Dependency
 from codoc.domain.helpers import get_node, get_children, set_parent
 from .types import FilterType
+from .helpers import (
+    is_both_edges_of_edge_in_list_of_nodes,
+    is_either_edges_of_edge_in_list_of_nodes,
+)
 
 
 def get_children_of(identifier: str, keep_external_nodes: bool = False) -> FilterType:
@@ -96,12 +100,10 @@ def is_node_accepted(node: Node, graph: Graph, allowed_identifier: NodeId) -> bo
 def is_edge_accepted(
     edge: Dependency, node_identifiers: Set[str], keep_external_nodes: bool
 ) -> bool:
-    is_from_node_internal = edge.from_node in node_identifiers
-    is_to_node_internal = edge.to_node in node_identifiers
     if keep_external_nodes:
-        return is_from_node_internal or is_to_node_internal
+        return is_either_edges_of_edge_in_list_of_nodes(edge, node_identifiers)
     else:
-        return is_from_node_internal and is_to_node_internal
+        return is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)
 
 
 def is_node_in_edges(node: Node, edges: Set[Dependency], graph: Graph) -> bool:

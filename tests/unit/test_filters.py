@@ -2,7 +2,8 @@
 import pytest
 
 from codoc.service import filters
-from codoc.domain.model import NodeType
+from codoc.service.filters import depth_based
+from codoc.domain.model import NodeType, Graph
 from codoc.domain.helpers import contains_node, contains_dependency_between
 
 
@@ -18,6 +19,60 @@ from codoc.domain.helpers import contains_node, contains_dependency_between
 def test_matches_snapshot(filter_function, test_graph, assert_match_snap):
     filtered_graph = filter_function(test_graph)
     assert_match_snap(filtered_graph)
+
+
+class TestDepthBasedFilter:
+    def test_returns_filter(self, graph):
+        assert type(filters.get_depth_based_filter(1)(graph)) is Graph
+
+    def test_depth_zero_is_empty(self, graph, parent):
+        filtered_graph = filters.get_depth_based_filter(0)(graph)
+        assert len(filtered_graph.nodes) == 0 and len(filtered_graph.edges) == 0
+
+    def test_depth_one_only_has_root(self, graph, parent):
+        assert filters.get_depth_based_filter(1)(graph).nodes == {parent}
+
+    class TestGetDepthOfNode:
+        def test_depth_of_parent(self, parent, get_depth_of):
+            assert get_depth_of(parent) == 1
+
+        def test_depth_of_child(self, child, get_depth_of):
+            assert get_depth_of(child) == 2
+
+        def test_depth_of_child_2(self, child_2, get_depth_of):
+            assert get_depth_of(child_2) == 2
+
+        @pytest.fixture()
+        def get_depth_of(self, graph):
+            return lambda node: depth_based.get_depth_of_node(node, graph)
+
+    def test_depth_zero_has_no_edges(self, graph, parent):
+        assert len(filters.get_depth_based_filter(0)(graph).edges) == 0
+
+    def test_keep_only_relevant_edges(self, create_graph, create_edge, create_node):
+        nodeA = create_node(identifier="A")
+        nodeB = create_node(identifier="B")
+        nodeC = create_node(identifier="C", parent=nodeB)
+        edge1 = create_edge(nodeA, nodeB)
+        edge2 = create_edge(nodeA, nodeC)
+        graph = create_graph(nodes={nodeA, nodeB, nodeC}, edges={edge1, edge2})
+        assert filters.get_depth_based_filter(1)(graph).edges == {edge1}
+
+    @pytest.fixture()
+    def graph(self, create_graph, child, child_2, parent):
+        return create_graph(nodes={child_2, child, parent})
+
+    @pytest.fixture()
+    def child_2(self, create_node, parent):
+        return create_node(parent=parent, identifier="child")
+
+    @pytest.fixture()
+    def child(self, create_node, parent):
+        return create_node(parent=parent, identifier="child")
+
+    @pytest.fixture()
+    def parent(self, create_node):
+        return create_node(identifier="parent")
 
 
 class TestGetChildrenOfFilter:
@@ -46,7 +101,7 @@ class TestGetChildrenOfFilter:
 
         @pytest.fixture()
         def graph(self, create_graph, child, parent):
-            return create_graph(nodes=[child, parent])
+            return create_graph(nodes={child, parent})
 
         @pytest.fixture()
         def child(self, create_node, parent):
