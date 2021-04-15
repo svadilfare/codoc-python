@@ -20,7 +20,7 @@ def create_graph_of_module(
     nodes = set(
         node
         for obj in all_objects
-        for node in {create_node_from_object(obj)}
+        for node in {create_node_from_object(obj, external=False)}
         | get_dependency_nodes_with_parents(
             obj,
             include_external_dependencies=include_external_dependencies,

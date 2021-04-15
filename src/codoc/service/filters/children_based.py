@@ -1,6 +1,7 @@
 # /usr/bin/env python3
-from typing import Set
+from typing import Set, Union
 from codoc.domain.model import Graph, Node, NodeId, Dependency
+from codoc.service.parsing.node import get_identifier_of_object
 from codoc.domain.helpers import get_node, get_children, set_parent
 from .types import FilterType
 from .helpers import (
@@ -9,9 +10,11 @@ from .helpers import (
 )
 
 
-def get_children_of(identifier: str, keep_external_nodes: bool = False) -> FilterType:
+def get_children_of(
+    node: Union[str, object, Node], keep_external_nodes: bool = False
+) -> FilterType:
     """
-    :param identifier: The string identifier of the parent class we want children of
+    :param node: The node, object or string identifier of what to filter based on
     :param keep_external_nodes: Whether to keep external dependencies of children
     :returns: A filter function that excludes non-children
     :rtype: GraphFilter
@@ -20,22 +23,31 @@ def get_children_of(identifier: str, keep_external_nodes: bool = False) -> Filte
 
     The returned filter (function) can then be called with a given graph.
 
+    **Important**: Children are **NOT** dependencies, they are things defined inside
+    the current node. I.e if a class, Foo, defined in FooModule, then FooModule
+    is the parent of Foo.
+
     Example
 
     .. code-block:: python
 
         from codoc.service.parsing.node import get_identifier_of_object
 
-       identifier = get_identifier_of_object(myproject.subproject)
-       filter_function = get_children_of(identifier)
+       identifier = get_identifier_of_object()
+       filter_function = filters.get_children_of(myproject.subproject)
 
        filtered_graph = filter_function(graph)
 
 
 
     """
-    if not isinstance(identifier, str):
-        raise TypeError(f"Identifier has to be a str, was a {type(identifier)}")
+    if not isinstance(node, str):
+        if isinstance(node, Node):
+            identifier = node.identifier
+        else:
+            identifier = get_identifier_of_object(node)
+    else:
+        identifier = node
 
     def filter_func(graph: Graph) -> Graph:
         internal_nodes = {

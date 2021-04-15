@@ -33,7 +33,7 @@ def test_get_dependencies_raises_error_in_strictmode():
 def test_get_dependencies_shows_warning_in_strictmode(caplog):
     caplog.set_level(logging.WARNING)
     get_dependency_nodes(function_that_fails_under_strict_mode, strict_mode=False)
-    assert "pytest.UndefinedThing" in caplog.text
+    assert "UndefinedThing" in caplog.text
 
 
 @pytest.fixture(

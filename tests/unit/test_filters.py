@@ -14,11 +14,39 @@ from codoc.domain.helpers import contains_node, contains_dependency_between
         filters.exclude_classes,
         filters.exclude_functions,
         filters.exclude_modules,
+        filters.exclude_exceptions,
+        filters.include_only_modules,
+        filters.include_only_functions,
+        filters.include_only_classes,
+        filters.include_only_exceptions,
     ],
 )
 def test_matches_snapshot(filter_function, test_graph, assert_match_snap):
     filtered_graph = filter_function(test_graph)
     assert_match_snap(filtered_graph)
+
+
+class TestExcludeExternals:
+    def test_remove_external(self, create_graph, create_node):
+        node = create_node(external=True)
+        graph = create_graph(nodes={node})
+        assert filters.exclude_external(graph).nodes == set()
+
+    def test_keep_internals(self, create_graph, create_node):
+        node = create_node(external=False)
+        graph = create_graph(nodes={node})
+        assert filters.exclude_external(graph).nodes == {node}
+
+    def test_only_keeps_internal_dependency(
+        self, create_graph, create_node, create_edge
+    ):
+        node_a = create_node(identifier="a", external=True)
+        node_b = create_node(identifier="b", external=False)
+        node_c = create_node(identifier="c", external=False)
+        edge_ab = create_edge(node_a, node_b)
+        edge_bc = create_edge(node_b, node_c)
+        graph = create_graph(nodes={node_a, node_b, node_c}, edges={edge_ab, edge_bc})
+        assert filters.exclude_external(graph).edges == {edge_bc}
 
 
 class TestDepthBasedFilter:
@@ -171,6 +199,7 @@ def test_graph(
     node_class_b,
     node_function,
     node_function_b,
+    node_exception,
     node_module,
     node_module_b,
     create_edge,
@@ -183,11 +212,13 @@ def test_graph(
             node_module,
             node_function_b,
             node_module_b,
+            node_exception,
         ],
         edges=[
             create_edge(node_class, node_class_b),
             create_edge(node_class_b, node_class),
             create_edge(node_class, node_function),
+            create_edge(node_class, node_exception),
             create_edge(node_class, node_module),
             create_edge(node_class_b, node_function),
             create_edge(node_function, node_class_b),
@@ -210,6 +241,15 @@ def node_class_b(create_node, node_module_b):
         identifier="ClassB",
         parent_identifier=node_module_b.identifier,
         of_type=NodeType.CLASS,
+    )
+
+
+@pytest.fixture
+def node_exception(create_node, node_module):
+    return create_node(
+        identifier="Exception",
+        parent_identifier=node_module.identifier,
+        of_type=NodeType.EXCEPTION,
     )
 
 

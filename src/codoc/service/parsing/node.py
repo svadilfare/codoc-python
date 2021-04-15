@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 DEBUG_MODE = True
 
 
-def create_node_from_object(obj: ObjectType) -> Node:
+def create_node_from_object(obj: ObjectType, external: bool = True) -> Node:
     if obj is None:
         raise ValueError()
     if is_an_instance(obj):
@@ -29,6 +29,7 @@ def create_node_from_object(obj: ObjectType) -> Node:
         path=get_path(obj),
         args=get_args(obj),
         lines=get_lines(obj),
+        external=external,
     )
 
 
@@ -157,10 +158,19 @@ def get_parent_of_object(obj: ObjectType) -> Optional[ObjectType]:
         return obj.__parentclass__
     except AttributeError:
         pass
+
     try:
-        return inspect.getmodule(obj)
+        module = inspect.getmodule(obj)
+        if module is not None:
+            return module
     except AttributeError:
-        return None
+        pass
+    try:
+        return importlib.import_module(obj.__module__)
+    except AttributeError:
+        pass
+
+    return None
 
 
 def _get_outer_module(obj: ObjectType) -> Optional[object]:

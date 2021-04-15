@@ -7,7 +7,17 @@ viewer friendly.
 from .class_diagram import class_diagram_filter
 from .children_based import get_children_of
 from .depth_based import get_depth_based_filter
-from .type_exclusion_filter import exclude_classes, exclude_functions, exclude_modules
+from .external_exclusion import exclude_external
+from .type_exclusion_filter import (
+    exclude_classes,
+    exclude_functions,
+    exclude_modules,
+    exclude_exceptions,
+    include_only_classes,
+    include_only_functions,
+    include_only_modules,
+    include_only_exceptions,
+)
 
 
 __all__ = [
@@ -15,6 +25,12 @@ __all__ = [
     "exclude_classes",
     "exclude_functions",
     "exclude_modules",
+    "exclude_exceptions",
+    "include_only_classes",
+    "include_only_modules",
+    "include_only_functions",
+    "include_only_exceptions",
     "get_children_of",
     "get_depth_based_filter",
+    "exclude_external",
 ]

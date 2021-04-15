@@ -11,63 +11,97 @@ from codoc.domain.helpers import get_node
 from .helpers import node_without_parent
 
 
+def include_only_modules(graph: Graph) -> Graph:
+    """
+    Returns a graph that only has modules
+    """
+    return TypeBasedFilter(NodeType.MODULE, exclusive=False).exclude(graph)
+
+
+def include_only_functions(graph: Graph) -> Graph:
+    """
+    Returns a graph that only has functions
+    """
+    return TypeBasedFilter(NodeType.FUNCTION, exclusive=False).exclude(graph)
+
+
+def include_only_classes(graph: Graph) -> Graph:
+    """
+    Returns a graph that only has classes
+    """
+    return TypeBasedFilter(NodeType.CLASS, exclusive=False).exclude(graph)
+
+
+def include_only_exceptions(graph: Graph) -> Graph:
+    """
+    Returns a graph that only has exceptions
+    """
+    return TypeBasedFilter(NodeType.EXCEPTION, exclusive=False).exclude(graph)
+
+
 def exclude_modules(graph: Graph) -> Graph:
     """
     Returns a graph that doesn't have any modules
     """
-    return TypeExclusionFilter(NodeType.MODULE).exclude(graph)
+    return TypeBasedFilter(NodeType.MODULE).exclude(graph)
 
 
 def exclude_functions(graph: Graph) -> Graph:
     """
     Returns a graph that doesn't have any functions
     """
-    return TypeExclusionFilter(NodeType.FUNCTION).exclude(graph)
+    return TypeBasedFilter(NodeType.FUNCTION).exclude(graph)
 
 
 def exclude_classes(graph: Graph) -> Graph:
     """
     Returns a graph that doesn't have any classes
     """
-    return TypeExclusionFilter(NodeType.CLASS).exclude(graph)
+    return TypeBasedFilter(NodeType.CLASS).exclude(graph)
 
 
-class TypeExclusionFilter:
+def exclude_exceptions(graph: Graph) -> Graph:
+    """
+    Returns a graph that doesn't have any exceptions
+    """
+    return TypeBasedFilter(NodeType.EXCEPTION).exclude(graph)
+
+
+class TypeBasedFilter:
     """
     Filte
     """
 
-    def __init__(self, exclude_type: NodeType):
-        self._excluded_type = exclude_type
+    # TODO make this inclusive too
+
+    def __init__(self, based_on_type: NodeType, exclusive: bool = True):
+        self._type = based_on_type
+        self._exclusive = exclusive
 
     def exclude(self, graph: Graph) -> Graph:
         return Graph(
-            edges=set(
-                edge
-                for edge in graph.edges
-                if not self.edge_is_attached_to_type(edge, graph)
-            ),
+            edges=set(edge for edge in graph.edges if self.edge_permitted(edge, graph)),
             nodes=set(
                 self.node_without_parent_of_type(node, graph)
                 for node in graph.nodes
-                if not self.is_type(node)
+                if self.permitted(node)
             ),
         )
 
-    def edge_is_attached_to_type(self, edge: Dependency, graph: Graph) -> bool:
-        return self.identifier_is_type(edge.to_node, graph) or self.identifier_is_type(
-            edge.from_node, graph
-        )
+    def edge_permitted(self, edge: Dependency, graph: Graph) -> bool:
+        return self.identifier_is_permitted(
+            edge.to_node, graph
+        ) and self.identifier_is_permitted(edge.from_node, graph)
 
     def node_without_parent_of_type(self, node: Node, graph) -> Node:
-        if node.parent_identifier and self.identifier_is_type(
+        if node.parent_identifier and self.identifier_is_permitted(
             node.parent_identifier, graph
         ):
             return node_without_parent(node)
         return node
 
-    def identifier_is_type(self, identifier: str, graph) -> bool:
-        return self.is_type(get_node(identifier, graph))
+    def identifier_is_permitted(self, identifier: str, graph) -> bool:
+        return self.permitted(get_node(identifier, graph))
 
-    def is_type(self, node: Node) -> bool:
-        return node.of_type is self._excluded_type
+    def permitted(self, node: Node) -> bool:
+        return (node.of_type is self._type) ^ self._exclusive

@@ -31,12 +31,13 @@ class Node:
 
     identifier: NodeId
     name: str
-    description: Optional[str]
     of_type: NodeType
-    parent_identifier: Optional[NodeId]
     path: Optional[str]
     args: Optional[Tuple[str, ...]]
     lines: Optional[Tuple[int, int]]
+    external: bool = True
+    description: Optional[str] = None
+    parent_identifier: Optional[NodeId] = None
 
     def __str__(self) -> str:
         if self.of_type is NodeType.MODULE:
@@ -95,6 +96,7 @@ class Graph:
             )
         return NotImplemented
 
+    # TODO handle if you have the "external" flag, and one is, the other isn't.
     def __or__(self, other: Any) -> "Graph":
         if isinstance(other, Graph):
             return Graph(edges=self.edges | other.edges, nodes=self.nodes | other.nodes)

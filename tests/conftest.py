@@ -49,6 +49,7 @@ def create_node():
         kwargs.setdefault("path", None)
         kwargs.setdefault("args", None)
         kwargs.setdefault("lines", None)
+        kwargs.setdefault("external", False)
         kwargs.setdefault("of_type", NodeType.CLASS)
         if "parent" in kwargs:
             kwargs.setdefault("parent_identifier", kwargs["parent"].identifier)
