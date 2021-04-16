@@ -2,11 +2,14 @@
 
 
 import pytest
-from codoc.domain.model import Graph
-from codoc.service.dependency_bubble import create_bubbled_dependencies
+from codoc.domain.model import Graph, Dependency
+from codoc.service.dependency_correcting import (
+    create_bubbled_dependencies,
+    remove_non_connected_edges,
+)
 
 
-class TestDepthBasedFilter:
+class TestBubbleDependencies:
     def test_returns_graph(self, new_graph):
         assert type(new_graph) is Graph
 
@@ -69,3 +72,33 @@ class TestDepthBasedFilter:
     @pytest.fixture()
     def node_a(self, create_node):
         return create_node(identifier="a")
+
+
+class TestRemoveNonConnectedEdges:
+    def test_removes_non_connected_edges(self, create_edge, create_graph):
+
+        graph = create_graph(edges={Dependency(from_node="A", to_node="B")})
+
+        assert remove_non_connected_edges(graph).edges == set()
+
+    def test_removes_partly_connected_edges(
+        self, create_edge, create_graph, create_node
+    ):
+
+        node = create_node(identifier="A")
+        graph = create_graph(
+            nodes={node}, edges={Dependency(from_node=node.identifier, to_node="B")}
+        )
+
+        assert remove_non_connected_edges(graph).edges == set()
+
+    def test_doesnt_remove_connected_edges(
+        self, create_edge, create_graph, create_node
+    ):
+
+        node = create_node(identifier="A")
+        graph = create_graph(
+            nodes={node}, edges={Dependency(from_node=node.identifier, to_node="B")}
+        )
+
+        assert remove_non_connected_edges(graph).edges == set()

@@ -17,16 +17,13 @@ from codoc.domain.model import Graph, Node
 
 from .types import FilterType
 
-from .helpers import get_edges_where_both_ends_are_in_nodes
-
 
 def get_depth_based_filter(depth: int) -> FilterType:
     def depth_based_filter(graph: Graph) -> Graph:
         nodes = set(
             node for node in graph.nodes if get_depth_of_node(node, graph) <= depth
         )
-        edges = get_edges_where_both_ends_are_in_nodes(graph.edges, nodes)
-        return Graph(nodes=nodes, edges=edges)
+        return Graph(nodes=nodes, edges=graph.edges)
 
     return depth_based_filter
 

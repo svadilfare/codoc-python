@@ -4,12 +4,6 @@ from typing import Set
 from codoc.domain.model import Dependency, Node
 
 
-def node_without_parent(node: Node) -> Node:
-    kwargs = node.__dict__
-    kwargs["parent_identifier"] = None
-    return Node(**kwargs)
-
-
 def get_edges_where_both_ends_are_in_nodes(edges: Set[Dependency], nodes: Set[Node]):
     node_identifiers = set(node.identifier for node in nodes)
     return set(

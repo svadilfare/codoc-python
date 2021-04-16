@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import pytest
-
+from codoc.domain.helpers import contains_node
+from codoc.domain.model import Graph, NodeType
 from codoc.service import filters
 from codoc.service.filters import depth_based
-from codoc.domain.model import NodeType, Graph
-from codoc.domain.helpers import contains_node, contains_dependency_between
 
 
 @pytest.mark.parametrize(
@@ -26,6 +25,30 @@ def test_matches_snapshot(filter_function, test_graph, assert_match_snap):
     assert_match_snap(filtered_graph)
 
 
+class TestExcludeRegexFilter:
+    def test_remove_match(self, create_graph, create_node):
+        node = create_node(name="test")
+        graph = create_graph(nodes={node})
+        assert filters.exclude_by_regex("abc")(graph).nodes == {node}
+
+    def test_remove_non_match(self, create_graph, create_node):
+        node = create_node(name="abc")
+        graph = create_graph(nodes={node})
+        assert filters.exclude_by_regex("abc")(graph).nodes == set()
+
+
+class TestRegexFilter:
+    def test_remove_not_match(self, create_graph, create_node):
+        node = create_node(name="test")
+        graph = create_graph(nodes={node})
+        assert filters.filter_by_regex("abc")(graph).nodes == set()
+
+    def test_keep_match(self, create_graph, create_node):
+        node = create_node(name="abc")
+        graph = create_graph(nodes={node})
+        assert filters.filter_by_regex("abc")(graph).nodes == {node}
+
+
 class TestExcludeExternals:
     def test_remove_external(self, create_graph, create_node):
         node = create_node(external=True)
@@ -37,17 +60,6 @@ class TestExcludeExternals:
         graph = create_graph(nodes={node})
         assert filters.exclude_external(graph).nodes == {node}
 
-    def test_only_keeps_internal_dependency(
-        self, create_graph, create_node, create_edge
-    ):
-        node_a = create_node(identifier="a", external=True)
-        node_b = create_node(identifier="b", external=False)
-        node_c = create_node(identifier="c", external=False)
-        edge_ab = create_edge(node_a, node_b)
-        edge_bc = create_edge(node_b, node_c)
-        graph = create_graph(nodes={node_a, node_b, node_c}, edges={edge_ab, edge_bc})
-        assert filters.exclude_external(graph).edges == {edge_bc}
-
 
 class TestDepthBasedFilter:
     def test_returns_filter(self, graph):
@@ -55,7 +67,7 @@ class TestDepthBasedFilter:
 
     def test_depth_zero_is_empty(self, graph, parent):
         filtered_graph = filters.get_depth_based_filter(0)(graph)
-        assert len(filtered_graph.nodes) == 0 and len(filtered_graph.edges) == 0
+        assert len(filtered_graph.nodes) == 0
 
     def test_depth_one_only_has_root(self, graph, parent):
         assert filters.get_depth_based_filter(1)(graph).nodes == {parent}
@@ -73,18 +85,6 @@ class TestDepthBasedFilter:
         @pytest.fixture()
         def get_depth_of(self, graph):
             return lambda node: depth_based.get_depth_of_node(node, graph)
-
-    def test_depth_zero_has_no_edges(self, graph, parent):
-        assert len(filters.get_depth_based_filter(0)(graph).edges) == 0
-
-    def test_keep_only_relevant_edges(self, create_graph, create_edge, create_node):
-        nodeA = create_node(identifier="A")
-        nodeB = create_node(identifier="B")
-        nodeC = create_node(identifier="C", parent=nodeB)
-        edge1 = create_edge(nodeA, nodeB)
-        edge2 = create_edge(nodeA, nodeC)
-        graph = create_graph(nodes={nodeA, nodeB, nodeC}, edges={edge1, edge2})
-        assert filters.get_depth_based_filter(1)(graph).edges == {edge1}
 
     @pytest.fixture()
     def graph(self, create_graph, child, child_2, parent):
@@ -153,20 +153,6 @@ class TestGetChildrenOfFilter:
 
 
 class TestFilterOnlyClasses:
-    def test_keeps_class_to_class_edges(self, filtered_graph, node_class, node_class_b):
-        assert contains_dependency_between(
-            node_class.identifier, node_class_b.identifier, filtered_graph
-        )
-
-    def test_removes_non_class_to_class_edges(
-        self, filtered_graph, node_class, node_function, node_module
-    ):
-        assert not contains_dependency_between(
-            node_class.identifier, node_function.identifier, filtered_graph
-        ) and not contains_dependency_between(
-            node_module.identifier, node_function.identifier, filtered_graph
-        )
-
     def test_keeps_class_nodes(self, filtered_graph, any_node_class):
         assert contains_node(any_node_class.identifier, filtered_graph)
 
@@ -202,7 +188,6 @@ def test_graph(
     node_exception,
     node_module,
     node_module_b,
-    create_edge,
 ):
     return create_graph(
         nodes=[
@@ -213,19 +198,6 @@ def test_graph(
             node_function_b,
             node_module_b,
             node_exception,
-        ],
-        edges=[
-            create_edge(node_class, node_class_b),
-            create_edge(node_class_b, node_class),
-            create_edge(node_class, node_function),
-            create_edge(node_class, node_exception),
-            create_edge(node_class, node_module),
-            create_edge(node_class_b, node_function),
-            create_edge(node_function, node_class_b),
-            create_edge(node_module, node_function),
-            create_edge(node_function, node_module),
-            create_edge(node_function, node_function_b),
-            create_edge(node_module, node_module_b),
         ],
     )
 

@@ -51,3 +51,21 @@ def _get_set_of_all_parents(identifier: NodeId, graph: Graph) -> Set[Node]:
         return {node}
 
     return _get_set_of_all_parents(parent_id, graph) | {node}
+
+
+def remove_non_connected_edges(graph: Graph) -> Graph:
+    node_identifiers = set(node.identifier for node in graph.nodes)
+    edges = set(
+        edge
+        for edge in graph.edges
+        if is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)
+    )
+    return Graph(nodes=graph.nodes, edges=edges)
+
+
+def is_both_edges_of_edge_in_list_of_nodes(
+    edge: Dependency, node_identifiers: Set[str]
+) -> bool:
+    is_from_node_internal = edge.from_node in node_identifiers
+    is_to_node_internal = edge.to_node in node_identifiers
+    return is_from_node_internal and is_to_node_internal

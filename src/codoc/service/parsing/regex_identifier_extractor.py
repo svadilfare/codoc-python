@@ -50,7 +50,7 @@ class RegexIdentifierExtractor(IdentifierExtractor):
         return set(match[1] for match in matches)
 
     def _get_all_matches_in_code(self, identifier: str) -> List[str]:
-        pythonic_boundary = r"([^\d\w]|^|$)"
+        pythonic_boundary = r"([^\d\w.]|^|$)"
         return re.findall(
             pythonic_boundary
             + "("

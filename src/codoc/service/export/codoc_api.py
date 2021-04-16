@@ -2,6 +2,7 @@
 import requests
 from typing import Optional, Dict, Any
 from codoc.domain.model import Graph
+from codoc.service.dependency_correcting import remove_non_connected_edges
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,8 @@ def publish(
     """
     if not api_key:
         raise ApiKeyNotSupplied()
+    # TODO move this to somewhere else
+    graph = remove_non_connected_edges(graph)
 
     payload = _get_payload(
         graph=graph,

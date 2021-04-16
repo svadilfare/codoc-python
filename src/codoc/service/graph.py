@@ -6,6 +6,7 @@ from codoc.service.parsing.dependency import (
     get_dependency_nodes,
     get_dependency_nodes_with_parents,
 )
+from codoc.service.dependency_correcting import create_bubbled_dependencies
 from codoc.service.parsing.node import create_node_from_object, get_identifier_of_object
 
 from .object_unpacker import recursively_get_all_subobjects_in_object
@@ -39,4 +40,4 @@ def create_graph_of_module(
             strict_mode=strict_mode,
         )
     )
-    return Graph(nodes=nodes, edges=edges)
+    return create_bubbled_dependencies(Graph(nodes=nodes, edges=edges))

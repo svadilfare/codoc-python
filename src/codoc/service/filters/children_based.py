@@ -31,14 +31,12 @@ def get_children_of(
 
     .. code-block:: python
 
-        from codoc.service.parsing.node import get_identifier_of_object
+       # returns all modules/classes/exceptions/functions
+       # defined inside `myporject.subproject`.
 
-       identifier = get_identifier_of_object()
        filter_function = filters.get_children_of(myproject.subproject)
 
        filtered_graph = filter_function(graph)
-
-
 
     """
     if not isinstance(node, str):
@@ -67,7 +65,7 @@ def get_children_of(
                     )
                     for node in internal_nodes
                 },
-                edges=edges,
+                edges=graph.edges,
             )
         else:
             # Also remove `parent_id` for all nodes if parent_id is outside.
@@ -79,7 +77,7 @@ def get_children_of(
                     if is_node_in_edges(node, edges, graph)
                     or is_node_accepted(node, graph, identifier)
                 },
-                edges=edges,
+                edges=graph.edges,
             )
 
     return filter_func

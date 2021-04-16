@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
 from codoc.domain.model import Graph
+from .high_order_filter import filter_nodes_by_lambda
 
-from .helpers import get_edges_where_both_ends_are_in_nodes
 
-
-# TODO this fails if you do an OR on two graphs.
+# TODO this fails if you do an OR on two graphs where node is in both.
 def exclude_external(graph: Graph) -> Graph:
-    nodes = {node for node in graph.nodes if not node.external}
-    edges = get_edges_where_both_ends_are_in_nodes(graph.edges, nodes)
-
-    return Graph(nodes=nodes, edges=edges)
+    return filter_nodes_by_lambda(lambda node: not node.external)(graph)

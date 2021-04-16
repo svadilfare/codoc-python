@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from codoc.domain.model import Graph, Node, NodeType, Dependency
-from codoc.domain.helpers import get_node
-from .helpers import node_without_parent
+from codoc.domain.helpers import get_node, set_parent
 
 
+# TODO fix. this is so fucking wrong
 def class_diagram_filter(graph: Graph) -> Graph:
     """
     :param graph: Graph to filter
@@ -32,7 +32,7 @@ def node_with_non_class_parent(node: Node, graph) -> Node:
     if node.parent_identifier and not identifier_is_class(
         node.parent_identifier, graph
     ):
-        return node_without_parent(node)
+        return set_parent(node, None)
     return node
 
 

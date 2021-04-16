@@ -18,6 +18,7 @@ from .type_exclusion_filter import (
     include_only_modules,
     include_only_exceptions,
 )
+from .regex_based import filter_by_regex, exclude_by_regex
 
 
 __all__ = [
@@ -33,4 +34,6 @@ __all__ = [
     "get_children_of",
     "get_depth_based_filter",
     "exclude_external",
+    "filter_by_regex",
+    "exclude_by_regex",
 ]

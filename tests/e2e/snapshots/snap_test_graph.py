@@ -51,17 +51,33 @@ snapshots["test_happy_path_create_graph 1"] = (
     ],
     [
         ("Animal/NodeType.CLASS/examples", "AnimalType/NodeType.CLASS/examples"),
+        ("Animal/NodeType.CLASS/examples", "examples/NodeType.MODULE/"),
         (
             "BareClassExtension/NodeType.CLASS/examples",
             "BareClass/NodeType.CLASS/examples",
         ),
+        ("BareClassExtension/NodeType.CLASS/examples", "examples/NodeType.MODULE/"),
         ("StringTypedClass/NodeType.CLASS/examples", "Course/NodeType.CLASS/examples"),
         ("StringTypedClass/NodeType.CLASS/examples", "Student/NodeType.CLASS/examples"),
+        ("StringTypedClass/NodeType.CLASS/examples", "examples/NodeType.MODULE/"),
         ("Student/NodeType.CLASS/examples", "Course/NodeType.CLASS/examples"),
         ("Student/NodeType.CLASS/examples", "Person/NodeType.CLASS/examples"),
+        ("Student/NodeType.CLASS/examples", "examples/NodeType.MODULE/"),
         (
             "examples.submodule.classes/NodeType.MODULE/examples.submodule",
             "FooTesterTen/NodeType.CLASS/examples.submodule.classes",
+        ),
+        (
+            "examples.submodule.classes/NodeType.MODULE/examples.submodule",
+            "examples.submodule.classes/NodeType.MODULE/examples.submodule",
+        ),
+        (
+            "examples.submodule.classes/NodeType.MODULE/examples.submodule",
+            "examples.submodule/NodeType.MODULE/examples",
+        ),
+        (
+            "examples.submodule.classes/NodeType.MODULE/examples.submodule",
+            "examples/NodeType.MODULE/",
         ),
         (
             "examples.submodule.classes/NodeType.MODULE/examples.submodule",
@@ -75,6 +91,11 @@ snapshots["test_happy_path_create_graph 1"] = (
             "examples.submodule/NodeType.MODULE/examples",
             "examples.submodule.classes/NodeType.MODULE/examples.submodule",
         ),
+        (
+            "examples.submodule/NodeType.MODULE/examples",
+            "examples.submodule/NodeType.MODULE/examples",
+        ),
+        ("examples.submodule/NodeType.MODULE/examples", "examples/NodeType.MODULE/"),
         (
             "examples.submodule/NodeType.MODULE/examples",
             "foo_ten/NodeType.FUNCTION/examples.submodule.classes",
@@ -88,14 +109,28 @@ snapshots["test_happy_path_create_graph 1"] = (
             "ClassWithHackyDocumentation/NodeType.CLASS/examples",
         ),
         ("examples/NodeType.MODULE/", "Course/NodeType.CLASS/examples"),
+        (
+            "examples/NodeType.MODULE/",
+            "FooTesterTen/NodeType.CLASS/examples.submodule.classes",
+        ),
         ("examples/NodeType.MODULE/", "Person/NodeType.CLASS/examples"),
         ("examples/NodeType.MODULE/", "RandomError/NodeType.EXCEPTION/examples"),
         ("examples/NodeType.MODULE/", "StringTypedClass/NodeType.CLASS/examples"),
         ("examples/NodeType.MODULE/", "Student/NodeType.CLASS/examples"),
         ("examples/NodeType.MODULE/", "examples.foldermodule/NodeType.MODULE/examples"),
+        (
+            "examples/NodeType.MODULE/",
+            "examples.submodule.classes/NodeType.MODULE/examples.submodule",
+        ),
         ("examples/NodeType.MODULE/", "examples.submodule/NodeType.MODULE/examples"),
+        ("examples/NodeType.MODULE/", "examples/NodeType.MODULE/"),
+        (
+            "examples/NodeType.MODULE/",
+            "foo_ten/NodeType.FUNCTION/examples.submodule.classes",
+        ),
         ("examples/NodeType.MODULE/", "random_function/NodeType.FUNCTION/examples"),
         ("hates/NodeType.FUNCTION/Animal", "AnimalType/NodeType.CLASS/examples"),
+        ("hates/NodeType.FUNCTION/Animal", "examples/NodeType.MODULE/"),
         (
             "student/NodeType.FUNCTION/StringTypedClass",
             "Course/NodeType.CLASS/examples",
@@ -104,5 +139,6 @@ snapshots["test_happy_path_create_graph 1"] = (
             "student/NodeType.FUNCTION/StringTypedClass",
             "Student/NodeType.CLASS/examples",
         ),
+        ("student/NodeType.FUNCTION/StringTypedClass", "examples/NodeType.MODULE/"),
     ],
 )
