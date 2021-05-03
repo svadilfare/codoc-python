@@ -13,7 +13,7 @@ from codoc.service.parsing.node import get_identifier_of_object
 def domain_model(graph):
     """
     This view presents the basic domain model of the
-    [Codoc](https://codoc.org/) system.
+    Codoc Python system.
 
     It shows the core models.
 
@@ -23,7 +23,7 @@ def domain_model(graph):
         get_identifier_of_object(codoc.domain.model), keep_external_nodes=False
     )(graph)
 
-    return filters.class_diagram_filter(graph)
+    return filters.include_only_classes(graph)
 
 
 @view(

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Optional, Set
+from typing import Optional, Set, Union
 import dataclasses
 
 from .model import Graph, Node, NodeId
@@ -59,3 +59,9 @@ def get_parent_node(current_node: Node, graph: Graph) -> Optional[Node]:
         return get_node(current_node.parent_identifier, graph)
     except NodeIdentifierNotFoundException:
         raise ParentNotFoundException(current_node, graph)
+
+
+def get_identifiers(nodes: Union[Graph, Set[Node]]) -> Set[str]:
+    if isinstance(nodes, Graph):
+        nodes = nodes.nodes
+    return {node.identifier for node in nodes}

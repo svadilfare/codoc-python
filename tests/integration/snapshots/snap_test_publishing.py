@@ -23,14 +23,14 @@ snapshots["test_can_publish_graph 1"] = (
             "nodes": [
                 {
                     "description": "test",
-                    "identifier": "A",
+                    "identifier": "B",
                     "name": "test",
                     "of_type": "CLASS",
                     "parent_node": None,
                 },
                 {
                     "description": "test",
-                    "identifier": "B",
+                    "identifier": "A",
                     "name": "test",
                     "of_type": "CLASS",
                     "parent_node": None,

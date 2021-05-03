@@ -51,5 +51,14 @@ def view_modules_internal(graph):
     and are the basis of the overall system.
 
     """
-    graph = filters.get_children_of(codoc)(graph)
-    return filters.include_only_modules(graph)
+    return filters.get_depth_based_filter(2)(filters.get_children_of(codoc)(graph))
+
+
+@view(
+    label="Internal(detailed) Module View of the Codoc SDK",
+    description=view_modules_internal.__docs__,
+)
+def view_modules_internal_detailed(graph):
+    return filters.include_only_modules(
+        filters.get_depth_based_filter(3)(filters.get_children_of(codoc)(graph))
+    )

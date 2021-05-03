@@ -6,7 +6,6 @@ It will also remove all dependencies (edges) that reach a node that should be ex
 
 i.e exclude_modules will return a new graph with all module nodes have been removed.
 """
-from codoc.domain.helpers import get_node, set_parent
 from codoc.domain.model import Graph, Node, NodeType
 
 # TODO we need to remove invalid edges here somehwere.
@@ -83,22 +82,8 @@ class TypeBasedFilter:
     def filter(self, graph: Graph) -> Graph:
         return Graph(
             edges=graph.edges,
-            nodes=set(
-                self.node_without_parent_of_type(node, graph)
-                for node in graph.nodes
-                if self.permitted(node)
-            ),
+            nodes=set(node for node in graph.nodes if self.permitted(node)),
         )
-
-    def node_without_parent_of_type(self, node: Node, graph) -> Node:
-        if node.parent_identifier and self.identifier_is_permitted(
-            node.parent_identifier, graph
-        ):
-            return set_parent(node, None)
-        return node
-
-    def identifier_is_permitted(self, identifier: str, graph) -> bool:
-        return self.permitted(get_node(identifier, graph))
 
     def permitted(self, node: Node) -> bool:
         return (node.of_type is self._type) ^ self._exclusive

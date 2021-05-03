@@ -117,12 +117,6 @@ class TestGetChildrenOfFilter:
         def test_keeps_child(self, child, filtered_graph):
             assert child in filtered_graph.nodes
 
-        def test_removes_childs_parent_attribute(self, filtered_graph):
-            # there should only be the one node
-            assert len(filtered_graph.nodes) == 1
-            child = list(filtered_graph.nodes)[0]
-            assert child.parent_identifier is None
-
         @pytest.fixture()
         def filtered_graph(self, parent, child, graph):
             return filters.get_children_of(child.identifier)(graph)

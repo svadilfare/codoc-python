@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from typing import Callable, List
+from types import ModuleType
 import importlib.util
 import inspect
 from pathlib import Path
@@ -12,19 +13,27 @@ CodocView = Callable[[Graph], Graph]
 
 
 def get_views_in_file(py_file: Path) -> List[CodocView]:
+    module = get_module_from_file(py_file)
+
+    views = [
+        value for key, value in inspect.getmembers(module) if is_a_codoc_view(value)
+    ]
+
+    return views
+
+
+def is_a_codoc_view(obj: object) -> bool:
+    return getattr(obj, "__is_codoc_view", False)
+
+
+def get_module_from_file(py_file: Path) -> ModuleType:
     file_name = py_file.name[:-3]
-    # TODO create a helper for importing shit
+
     spec = importlib.util.spec_from_file_location(file_name, py_file)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    views = [
-        value
-        for key, value in inspect.getmembers(module)
-        if getattr(value, "__is_codoc_view", False)
-    ]
-
-    return views
+    return module
 
 
 def get_views_in_folder(folder: Path) -> List[CodocView]:
