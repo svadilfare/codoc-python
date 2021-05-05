@@ -82,7 +82,7 @@ class TypeBasedFilter:
     def filter(self, graph: Graph) -> Graph:
         return Graph(
             edges=graph.edges,
-            nodes=set(node for node in graph.nodes if self.permitted(node)),
+            nodes={node for node in graph.nodes if self.permitted(node)},
         )
 
     def permitted(self, node: Node) -> bool:

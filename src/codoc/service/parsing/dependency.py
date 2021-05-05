@@ -206,7 +206,7 @@ class DependencyInspector:
 
     @lru_cache(maxsize=None)
     def get_identifier_names_in_scope(self) -> Set[str]:
-        return set(name for name, value in self.get_identifiers_in_scope())
+        return {name for name, value in self.get_identifiers_in_scope()}
 
     def get_identifiers_in_scope(self) -> List[Tuple[str, Type]]:
         return inspect.getmembers(self._module) + inspect.getmembers(builtins)

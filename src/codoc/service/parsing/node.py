@@ -45,10 +45,7 @@ def get_identifier_of_object(obj: ObjectType) -> str:
         # because the element is a builtin,
         # and the parent is then a fine hash.
         parent = get_parent_of_object(obj)
-        if parent:
-            hash_id = get_name(parent)
-        else:
-            hash_id = ""
+        hash_id = get_name(parent) if parent else ""
     return f"{get_name(obj)}/{get_type(obj)}/{hash_id}"
 
 
@@ -68,8 +65,7 @@ def get_path(obj: ObjectType) -> Optional[str]:
         abs_path = inspect.getfile(obj)
 
         cwd = os.getcwd()
-        relative_path = os.path.relpath(abs_path, cwd)
-        return relative_path
+        return os.path.relpath(abs_path, cwd)
     except TypeError:
         return None
 
@@ -180,9 +176,7 @@ def _get_outer_module(obj: ObjectType) -> Optional[object]:
     outer_module_name = ".".join(get_name(obj).split(".")[:-1])
     if outer_module_name == "":
         return None
-    outer_module = importlib.import_module(outer_module_name)
-
-    return outer_module
+    return importlib.import_module(outer_module_name)
 
 
 class UnrecognizedTypeError(Exception):

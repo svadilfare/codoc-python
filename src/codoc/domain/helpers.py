@@ -49,7 +49,7 @@ def has_children(identifier: NodeId, graph: Graph) -> bool:
 
 
 def get_children(identifier: NodeId, graph: Graph) -> Set[Node]:
-    return set(node for node in graph.nodes if node.parent_identifier == identifier)
+    return {node for node in graph.nodes if node.parent_identifier == identifier}
 
 
 def get_parent_node(current_node: Node, graph: Graph) -> Optional[Node]:

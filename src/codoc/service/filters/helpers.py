@@ -5,12 +5,9 @@ from codoc.domain.model import Dependency, Node
 
 
 def get_edges_where_both_ends_are_in_nodes(edges: Set[Dependency], nodes: Set[Node]):
-    node_identifiers = set(node.identifier for node in nodes)
-    return set(
-        edge
-        for edge in edges
-        if is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)
-    )
+    node_identifiers = {node.identifier for node in nodes}
+    return {edge for edge in edges
+            if is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)}
 
 
 def is_both_edges_of_edge_in_list_of_nodes(

@@ -24,11 +24,12 @@ from codoc.domain.model import Graph, Node, Dependency, NodeId
 
 def create_bubbled_dependencies(graph: Graph) -> Graph:
 
-    edges = set(
+    edges = {
         edge
         for original_edge in graph.edges
         for edge in _get_edge_superset(original_edge, graph)
-    )
+    }
+
     return Graph(nodes=graph.nodes, edges=edges)
 
 
@@ -36,11 +37,11 @@ def _get_edge_superset(edge: Dependency, graph: Graph):
     parents_of_from_node = _get_set_of_all_parents(edge.from_node, graph)
     parents_of_to_node = _get_set_of_all_parents(edge.to_node, graph)
 
-    return set(
+    return {
         Dependency(from_node=from_node.identifier, to_node=to_node.identifier)
         for from_node in parents_of_from_node
         for to_node in parents_of_to_node
-    )
+    }
 
 
 def _get_set_of_all_parents(identifier: NodeId, graph: Graph) -> Set[Node]:
@@ -54,12 +55,9 @@ def _get_set_of_all_parents(identifier: NodeId, graph: Graph) -> Set[Node]:
 
 
 def remove_non_connected_edges(graph: Graph) -> Graph:
-    node_identifiers = set(node.identifier for node in graph.nodes)
-    edges = set(
-        edge
-        for edge in graph.edges
-        if is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)
-    )
+    node_identifiers = {node.identifier for node in graph.nodes}
+    edges = {edge for edge in graph.edges
+            if is_both_edges_of_edge_in_list_of_nodes(edge, node_identifiers)}
     return Graph(nodes=graph.nodes, edges=edges)
 
 

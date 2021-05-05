@@ -35,11 +35,11 @@ class RegexIdentifierExtractor(IdentifierExtractor):
         self._possible_identifiers = identifiers_in_scope
 
     def get_identifiers(self) -> Set[str]:
-        return set(
+        return {
             match
             for identifier in self._possible_identifiers
             for match in self.get_full_identifier_matches_in_code(identifier)
-        )
+        }
 
     def get_full_identifier_matches_in_code(self, identifier: str) -> Set[str]:
         """
@@ -47,7 +47,7 @@ class RegexIdentifierExtractor(IdentifierExtractor):
         a list of all matches that contain `inspect` - i.e `inspect.getsource` etc.
         """
         matches = self._get_all_matches_in_code(identifier)
-        return set(match[1] for match in matches)
+        return {match[1] for match in matches}
 
     def _get_all_matches_in_code(self, identifier: str) -> List[str]:
         pythonic_boundary = r"([^\d\w.]|^|$)"
