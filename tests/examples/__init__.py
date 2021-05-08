@@ -107,22 +107,3 @@ class Animal:
         return [AnimalType.DOG]
         # TODO uncomment so test fails
         # return [t for t in AnimalType.choices() if t is not self.kind]
-
-
-__all__ = [
-    "submodule",
-    "foldermodule",
-    "BareClass",
-    "BareClassExtension",
-    "RandomError",
-    "Person",
-    "Course",
-    "StringTypedClass",
-    "Student",
-    "random_function",
-    "PYTHON_SCRIPT_USING_TYPING",
-    "PYTHON_SCRIPT_USING_INSPECT",
-    "ClasWithHackyDocumentation",
-    "AnimalType",
-    "Animal",
-]

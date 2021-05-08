@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from codoc.service.parsing.node import get_description, get_identifier_of_object
-from codoc.service import filters
-from codoc.service.export.codoc_view import view
+from codoc.service.parsing.node import get_description
+from codoc import filters, view
 
 import codoc
 import codoc.service
@@ -55,9 +54,7 @@ def view_cli_dependencies(graph):
     """
     Here we show the dependencies of the CLI.
     """
-    return filters.get_children_of(
-        get_identifier_of_object(codoc.entrypoints), keep_external_nodes=True
-    )(graph)
+    return filters.get_children_of(codoc.entrypoints, keep_external_nodes=True)(graph)
 
 
 @view(

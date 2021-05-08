@@ -26,5 +26,5 @@ repos:
       - id: flake8
         args:
           - --max-line-length=101
-          - --exclude=*/migrations/*,docs/*,*/snapshots/*
+          - --exclude=*/migrations/*,docs/*,*/snapshots/*,*/__init__.py
           - --ignore=E126,W503

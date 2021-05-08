@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-from codoc.service import filters
-from codoc.service.export.codoc_view import view
+from codoc import filters, view
 
 import codoc
 

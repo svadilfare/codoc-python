@@ -10,7 +10,7 @@ except FileNotFoundError:
 
 setup(
     name="codoc-python",
-    version="0.1.7",
+    version="0.1.8.2",
     author="Casper Weiss Bang",
     author_email="casper@svadilfare.dev",
     description="Tool for generating architectural views for the codoc system",
@@ -18,7 +18,7 @@ setup(
     long_description=readme,
     url="https://codoc.org/",
     packages=find_packages(),
-    install_requires=["requests==2.25.1", "fire==0.4.0", "sentry-sdk==1.0.0"],
+    install_requires=["requests==2.25.1", "fire==0.4.0", "sentry-sdk==1.0.0", "wheel"],
     python_requires="!=2.*, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers

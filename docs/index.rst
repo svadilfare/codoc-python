@@ -42,9 +42,10 @@ Features
 - Historical information about prior views
 - **COMING SOON** See graphical representation of test coverage, contributors etc.
 - **COMING SOON** Get live monitoring data on your views
+- **COMING SOON** Comments and dialogue about views.
 - **COMING SOON** A git bot that provide context for pull requests
 - **COMING SOON** A variety of export possibilities
-- **COMING SOON** Sphinx (and other) integrations
+- **COMING SOON** Sphinx, Confluence, GitBook (and other) integrations
 
 Content
 ---------------
@@ -52,6 +53,7 @@ Content
    :maxdepth: 3
 
    getting_started
+   examples
    reference/index
    faq
 

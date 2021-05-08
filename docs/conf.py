@@ -84,9 +84,13 @@ html_theme_options = {
     "dark_logo": "img/logo-white.svg",
     "light_css_variables": {
         "color-brand-primary": "#f05623",
+        "admonition-title-font-size": "1.25rem",
+        "admonition-font-size": "1rem",
     },
     "dark_css_variables": {
         "color-brand-primary": "#f05623",
+        "admonition-title-font-size": "1.25rem",
+        "admonition-font-size": "1rem",
     },
 }
 html_static_path = ["_static"]

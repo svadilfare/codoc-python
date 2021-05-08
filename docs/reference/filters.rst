@@ -12,21 +12,21 @@ Filters
 
 .. _type_ex_filter:
 
-Type exclusion Filters
+Type based
 ----------------------
 .. automodule:: codoc.service.filters.type_exclusion_filter
 
 
 .. _class_ex_filter:
 
-Class based
+Exclude classes
 `````````````````
 
 .. autofunction:: exclude_classes
 
 .. _function_ex_filter:
 
-Function based
+Exclude functions
 `````````````````
 
 .. autofunction:: exclude_functions
@@ -34,19 +34,48 @@ Function based
 
 .. _module_ex_filter:
 
-Module based
+Exclude modules
 `````````````````
 
 .. autofunction:: exclude_modules
 
+Exclude exceptions
+````````````````````
+
+.. autofunction:: exclude_exceptions
+
+Only classes
+`````````````````
+
+.. autofunction:: include_only_classes
+
+Only functions
+`````````````````
+
+.. autofunction:: include_only_functions
+
+
+Only modules
+`````````````````
+
+.. autofunction:: include_only_modules
+
+Only exceptions
+````````````````````
+
+.. autofunction:: include_only_exceptions
 
 .. _child_filter:
 
-Child Based Filters
+Child Based
 ----------------------
 
 .. autofunction:: codoc.service.filters.get_children_of
 
+Depth based
+----------------------
+
+.. autofunction:: codoc.service.filters.get_depth_based_filter
 
 .. _class_diagram:
 

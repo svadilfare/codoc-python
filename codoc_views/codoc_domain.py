@@ -2,9 +2,7 @@
 import codoc.domain.model
 import codoc.domain
 import codoc.domain.helpers
-from codoc.service import filters
-from codoc.service.export.codoc_view import view
-from codoc.service.parsing.node import get_identifier_of_object
+from codoc import filters, view
 
 
 @view(
@@ -19,9 +17,7 @@ def domain_model(graph):
 
     To actually utilize the classes, look at the service layer.
     """
-    graph = filters.get_children_of(
-        get_identifier_of_object(codoc.domain.model), keep_external_nodes=False
-    )(graph)
+    graph = filters.get_children_of(codoc.domain.model)(graph)
 
     return filters.include_only_classes(graph)
 
@@ -30,8 +26,6 @@ def domain_model(graph):
     label="Domain",
 )
 def domain(graph):
-    graph = filters.get_children_of(
-        get_identifier_of_object(codoc.domain), keep_external_nodes=False
-    )(graph)
+    graph = filters.get_children_of(codoc.domain)(graph)
 
     return graph

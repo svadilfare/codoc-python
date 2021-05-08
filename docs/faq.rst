@@ -84,6 +84,8 @@ Another possible problem is side-effects in your codebase. See :ref:`side_effect
 
 If you have circular dependencies, that will make codocpy crash some times, due to python crashing.
 
+If you are using Django, then it might be due to a `known bug <https://github.com/svadilfare/codoc-python/issues/4>`_ with ``admin.py``.
+
 We try our best at providing meaningful messages, where possible, however, it
 might be difficult at times. Codoc is a sensitive framework, but it will help
 you forever if you treat it right.
@@ -92,5 +94,7 @@ Is it secure?
 ----------------------
 You might fear losing your data. You shouldn't! Codoc doesn't access data and
 only reads your source code. It also only exports what you want, and you can
-always delete your data again. It's as safe as using Github, Sonarcloud, or other
-tools.
+always delete your data again. We, however, do not currently offer any
+self-hosted solutions, so if you want total control over your data, you are out
+of luck. Please contact us, if this is a big issue for you, and we might be able
+to help, and/or prioritize it higher.

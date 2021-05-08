@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from codoc.service.graph import create_graph_of_module
+from codoc import new_graph
 
 from dotenv import load_dotenv
 
@@ -8,4 +8,4 @@ import codoc
 
 def bootstrap(**kwargs):
     load_dotenv()
-    return create_graph_of_module(codoc, **kwargs)
+    return new_graph(codoc, **kwargs)
