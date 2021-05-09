@@ -4,6 +4,22 @@
 Getting started
 ===============
 
+This guide will go through setting up Codoc with Python, creating a config and a
+few simple architectural views with the supplied framework. Finally you will
+publish them, and see the diagrams of your system. Very neat!
+
+Don't know what views are? A *view*, or *architectural view* is, according to
+`opengroup.org
+<https://pubs.opengroup.org/architecture/togaf8-doc/arch/chap31.html>`_ is:
+
+    Architecture views are representations of the overall architecture that are
+    meaningful to one or more stakeholders in the system. The architect chooses
+    and develops a set of views that will enable the architecture to be
+    communicated to, and understood by, all the stakeholders, and enable them to
+    verify that the system will address their concerns.
+
+We have an indepth motivation and explanation on https://codoc.org - it also has examples!
+
 ``codocpy`` requires: Python 3.6, 3.7, 3.8, 3.9.
 
 .. _`getstarted`:
@@ -57,6 +73,9 @@ the ``myproject`` module, and it's direct dependencies:
 
 Your first *view function*
 --------------------------
+You'll be creating what we call a *view function* now. This is a function that
+takes, as input, a graph that details the whole python codebase, and as output
+returns a new graph. This makes it possible for you to
 
 Inside the ``codoc_views`` folder, create a new python file, the name of which can be anything
 you choose. This file will include your first *view function*, which generates a view
@@ -71,9 +90,9 @@ of the modules of your system.
     )
     def modules(graph):
         """
-        This view contains all the top level modules that our project contains.
+        This view contains all the modules that your project contains.
         """
-        module_graph = filters.include_only_modules(graph)
+        return filters.include_only_modules(graph)
         top_module_graph = filters.get_depth_based_filter(2)(module_graph)
         return top_module_graph
 
@@ -114,7 +133,7 @@ way of doing is simply by writing:
 
 .. code-block:: bash
 
-    $ export CODOC_API_KEY="f5f9c07f4ce96aeee3aeb32faf35c0e821b8c831"
+    $ export CODOC_API_KEY=f5f9c07f4ce96aeee3aeb32faf35c0e821b8c831
 
 You can now publish your views:
 
@@ -130,6 +149,90 @@ You can now publish your views:
 Your view is now published, and you can view it at the URL shown in your console
 (in our example https://codoc.org/app/graph/181) which offers a public example
 from our `sample project <https://github.com/svadilfare/codoc-python-example>`_
+
+
+Your second *view function*
+---------------------------
+This prior view might be very verbose, depending on the system you have.
+It also shows all external dependencies too, which might not be ideal.
+
+If you feel confident and want to play around, you can look at
+either :ref:`examples` for examples of views we created or :ref:`filters` for a
+complete lists of possible views.
+
+Otherwise read on! We will go into how you can use these filters for more
+complex needs.
+
+As mentioned, filters are simply functions that remove nodes from your graph,
+however by combining them one can express rather complex needs.
+
+For instance by chaining them (i.e using one on the result of another) one can
+use the possibilities of both. The following examples uses a
+``depth_based_filter`` to only get the top modules and any direct content of those.
+
+Any important thing to note is that the function has a different name. Otherwise
+one would override the other.
+
+.. code-block:: python
+
+    # codoc_views/module_views.py
+    from codoc import filters, view
+
+    @view(
+        label="Top level Module View",
+    )
+    def top_level_modules(graph):
+        """
+        This view contains all the modules that your project contains.
+        """
+        graph = filters.include_only_modules(graph)
+        # we only want the outer most modules and their direct content
+        depth_based_filter = filters.get_depth_based_filter(2)
+        return depth_based_filter(graph)
+
+If you run ``codocpy publish`` again, you'll see two views being generated, and
+if you click on the new one, you'll see a simpler graph.
+
+Another great filter is the ``get_children_of``, which makes the graph "zoom in"
+on a subsection (subgraph) of the graph/system. So if you are analyzing a
+project called ``myproject`` but only want to view the content of a submodule,
+i.e ``myproject.submodule`` the following view would help:
+
+
+.. code-block:: python
+
+    # codoc_views/module_views.py
+    from codoc import filters, view
+    import myproject.submodule
+
+    @view(
+        label="Content of Submodule",
+    )
+    def content_of_submodule(graph):
+        return filters.get_children_of(myproject.submodule)(graph)
+
+You could also use the ``|`` (OR) operator to get the union of two graphs, i.e
+both modules AND classes. We increase depth here, to make sure we get more
+content.
+
+.. code-block:: python
+
+    # codoc_views/module_views.py
+    from codoc import filters, view
+    import myproject.submodule
+
+    @view(
+        label="Classes & Module View",
+    )
+    def modules_and_classes(graph):
+        graph = (
+                filters.include_only_modules(graph)
+                | filters.include_only_classes(graph)
+        )
+        return filters.get_children_of(myproject.submodule)(graph)
+
+Want more? There are a bunch of examples and reference documentation etc that
+you can consult. I hope it made sense - otherwise please contact us.
 
 .. seealso::
 

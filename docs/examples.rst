@@ -8,6 +8,28 @@ This file contains examples of different views, explain what they do and why you
 might want them. They are merely examples and might need tweaking to work within
 your project
 
+Top level modules view
+-----------------------
+
+This view shows all the top level modules and their direct descendants (content).
+
+.. code-block:: python
+
+    # codoc_views/module_views.py
+    from codoc import filters, view
+
+    @view(
+        label="Top level Module View",
+    )
+    def top_level_modules(graph):
+        """
+        This view contains all the modules that your project contains.
+        """
+        graph = filters.include_only_modules(graph)
+        # we only want the outer most modules and their direct content
+        depth_based_filter = filters.get_depth_based_filter(2)
+        return depth_based_filter(graph)
+
 Domain Model
 -------------
 Model diagram, class diagram or something else. People call it different

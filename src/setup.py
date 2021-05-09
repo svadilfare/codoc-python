@@ -8,6 +8,7 @@ except FileNotFoundError:
     with open("README.md") as f:
         readme = f.read()
 
+
 setup(
     name="codoc-python",
     version="0.1.8.2",
