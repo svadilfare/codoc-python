@@ -55,7 +55,6 @@ class CliHandler:
         if not silent:
             logging.basicConfig(
                 format="%(message)s",
-                encoding="utf-8",
                 level=logging.INFO,
             )
         self._report_errors = report_errors

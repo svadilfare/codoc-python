@@ -6,6 +6,7 @@ viewer friendly.
 """
 from .class_diagram import class_diagram_filter
 from .children_based import get_children_of
+from .children_based import get_children_of as content_of
 from .depth_based import get_depth_based_filter
 from .depth_based import get_depth_based_filter as depth_based
 from .external_exclusion import exclude_external
@@ -38,4 +39,5 @@ __all__ = [
     "filter_by_regex",
     "exclude_by_regex",
     "depth_based",
+    "content_of",
 ]

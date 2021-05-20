@@ -93,8 +93,6 @@ of the modules of your system.
         This view contains all the modules that your project contains.
         """
         return filters.include_only_modules(graph)
-        top_module_graph = filters.get_depth_based_filter(2)(module_graph)
-        return top_module_graph
 
 You can verify that codoc can find your views:
 
