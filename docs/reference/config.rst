@@ -18,11 +18,12 @@ The cool thing is that it is an executable python file, making it easy to write
 custom setup functions based on your environment.
 
 .. _bootstrap:
+.. _create_system_graph:
 
-Bootstrap
----------
+Create System Graph
+--------------------
 
-The graph given to each view function is generated with the ``bootstrap``
+The graph given to each view function is generated with the ``create_system_graph``
 function.
 
 One can utilize the simple version in :ref:`simple_config`, however more advanced
@@ -35,7 +36,7 @@ versions could be by utilizing :ref:`filters`, i.e:
 
     import myproject
 
-    def bootstrap(**kwargs):
+    def create_system_graph(**kwargs):
         graph = new_graph(myproject)
         return filters.exclude_functions(graph, **kwargs)
 
@@ -47,7 +48,7 @@ However the function exposes a variety of other possibilities too.
 Prepping your environment
 .........................
 
-One neat reason to use the :ref:`bootstrap` function, is that you can use it to
+One neat reason to use the :ref:`create_system_graph` function, is that you can use it to
 prepare your environment. If you are using a framework of sorts, there might be
 a need to bootstrap your code before it can run.
 
@@ -68,7 +69,7 @@ and it can easily be used for, for instance, your CODOC API key. Simply add it l
     import myproject
 
 
-    def bootstrap(**kwargs):
+    def create_system_graph(**kwargs):
         load_dotenv()
         return new_graph(myproject, **kwargs)
 
@@ -89,7 +90,7 @@ file does precisely this to include tests as well as dependencies of the views t
 
     import myproject, tests, codoc_views
 
-    def bootstrap(**kwargs):
+    def create_system_graph(**kwargs):
         return (
             new_graph(sample, **kwargs)
             | new_graph(tests, **kwargs)
@@ -115,7 +116,7 @@ django apps (Which is what they name their modules). Replace ``app_one`` and
     from codoc import new_graph
     import os
 
-    def bootstrap(**kwargs):
+    def create_system_graph(**kwargs):
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
         import django
         django.setup()

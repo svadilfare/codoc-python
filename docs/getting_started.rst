@@ -49,9 +49,11 @@ called ``codoc_views`` located at the root directory of your project.
 Start by creating a configuration file:
 
 You will also need a basic config file in the same folder, called ``config.py``.
-This file mainly needs a function called ``bootstrap`` to return a
-graph of the system in question. The example below returns a graph containing
-the ``myproject`` module, and it's direct dependencies:
+This file mainly needs a function called ``create_system_graph`` to return a
+graph of the system in question. The function takes ``**kwargs``, to pass along
+any flags. The example below returns a graph containing the ``myproject``
+module, and it's direct dependencies - please replace ``myproject`` with the
+module you want to document:
 
 .. warning:: Using django? Please see :ref:`django` to bootstrap that correctly.
              Please see :ref:`multi_mods` if your code exposes multiple packages.
@@ -63,7 +65,7 @@ the ``myproject`` module, and it's direct dependencies:
 
     import myproject
 
-    def bootstrap(**kwargs):
+    def create_system_graph(**kwargs):
         return new_graph(myproject, **kwargs)
 
 .. _`simpleviews`:

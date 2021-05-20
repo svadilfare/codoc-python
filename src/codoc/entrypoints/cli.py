@@ -83,16 +83,20 @@ class CliHandler:
                 sentry_sdk.flush()
             return f"Could not load config ({error_name(e)})"
 
-        logger.info("Starting to bootstrap")
+        logger.info("Starting to create system graph")
         try:
+            create_graph_func = getattr(
+                config, "create_system_graph", getattr(config, "bootstrap", None)
+            )
+            if create_graph_func is None:
+                return "You have to define a `create_system_graph` function in your config."
             try:
-                graph = config.bootstrap(strict_mode=strict_mode)
-                # TODO
+                graph = create_graph_func(strict_mode=strict_mode)
             except TypeError:
                 logger.warning(
-                    "Please pass kwargs into bootstrap! this will be deprecated soon!"
+                    "Please pass kwargs into `create_system_graph`! this will be deprecated soon!"
                 )
-                graph = config.bootstrap()
+                graph = create_graph_func()
         except KeyboardInterrupt:
             return "Manual exit"
         except Exception as e:
@@ -101,7 +105,7 @@ class CliHandler:
             if self._report_errors:
                 sentry_sdk.capture_exception(e)
                 sentry_sdk.flush()
-            return f"Could not run bootstrap ({error_name(e)})"
+            return f"Could not run `create_system_graph` ({error_name(e)})"
         logger.info("Graph loaded")
 
         api_key = os.getenv("CODOC_API_KEY")
