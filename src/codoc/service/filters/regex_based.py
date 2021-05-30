@@ -13,8 +13,11 @@ def filter_by_regex(pattern: str, flags=0) -> FilterType:
 
     The regex is done solely on the `name` attribute.
 
-    The following example removes all instances of "test".
+    The following example removes all instances that don't include "test".
     Example:
+
+    .. code-block:: python
+
        graph = filters.filter_by_regex("test", flags=re.IGNORECASE)(graph)
 
     To understand how to use regex, please consult the python documentation:
@@ -34,9 +37,12 @@ def exclude_by_regex(pattern: str, flags=0) -> FilterType:
 
     The regex is done solely on the `name` attribute.
 
-    The following example removes all instances of "test".
+    The following example removes all instances with a name that contains "test".
     Example:
-       graph = filters.filter_by_regex("test", flags=re.IGNORECASE)(graph)
+
+    .. code-block:: python
+
+       graph = filters.exclude_by_regex("test", flags=re.IGNORECASE)(graph)
 
     To understand how to use regex, please consult the python documentation:
 

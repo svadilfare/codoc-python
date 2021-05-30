@@ -7,82 +7,49 @@
 Filters
 ================
 
+list of all filters
+--------------------
+
 .. automodule:: codoc.service.filters
 
 
 .. _type_ex_filter:
 
-Type based
-----------------------
-.. automodule:: codoc.service.filters.type_exclusion_filter
-
-
 .. _class_ex_filter:
-
-Exclude classes
-`````````````````
 
 .. autofunction:: exclude_classes
 
 .. _function_ex_filter:
 
-Exclude functions
-`````````````````
-
 .. autofunction:: exclude_functions
-
 
 .. _module_ex_filter:
 
-Exclude modules
-`````````````````
-
 .. autofunction:: exclude_modules
-
-Exclude exceptions
-````````````````````
 
 .. autofunction:: exclude_exceptions
 
-Only classes
-`````````````````
-
 .. autofunction:: include_only_classes
-
-Only functions
-`````````````````
 
 .. autofunction:: include_only_functions
 
-
-Only modules
-`````````````````
-
 .. autofunction:: include_only_modules
-
-Only exceptions
-````````````````````
 
 .. autofunction:: include_only_exceptions
 
 .. _child_filter:
 
-Child Based
-----------------------
+.. autofunction:: content_of
 
-.. autofunction:: codoc.service.filters.get_children_of
-
-Depth based
-----------------------
-
-.. autofunction:: codoc.service.filters.get_depth_based_filter
+.. autofunction:: get_depth_based_filter
 
 .. _class_diagram:
 
-Class Diagram filter
-----------------------
+.. autofunction:: class_diagram_filter
 
-.. autofunction:: codoc.service.filters.class_diagram_filter
+
+.. autofunction:: filter_by_regex
+.. autofunction:: exclude_by_regex
 
 
 Customization

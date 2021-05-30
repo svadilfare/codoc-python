@@ -32,14 +32,12 @@ def get_children_of(
     the current node. I.e if a class, Foo, defined in FooModule, then FooModule
     is the parent of Foo.
 
-    Example
-
+    Example that returns all modules/classes/exceptions/functions defined
+    inside `myproject.subproject`.
     .. code-block:: python
 
-       # returns all modules/classes/exceptions/functions
-       # defined inside `myporject.subproject`.
 
-       filter_function = filters.get_children_of(myproject.subproject)
+       filter_function = filters.content_of(myproject.subproject)
 
        filtered_graph = filter_function(graph)
 
