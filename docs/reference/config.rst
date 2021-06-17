@@ -19,11 +19,12 @@ custom setup functions based on your environment.
 
 .. _bootstrap:
 .. _create_system_graph:
+.. _setup_function:
 
-Create System Graph
+Setup
 --------------------
 
-The graph given to each view function is generated with the ``create_system_graph``
+The graph given to each view function is generated with the ``setup``
 function.
 
 One can utilize the simple version in :ref:`simple_config`, however more advanced
@@ -36,7 +37,7 @@ versions could be by utilizing :ref:`filters`, i.e:
 
     import myproject
 
-    def create_system_graph(**kwargs):
+    def setup(**kwargs):
         graph = new_graph(myproject)
         return filters.exclude_functions(graph, **kwargs)
 
@@ -69,7 +70,7 @@ and it can easily be used for, for instance, your CODOC API key. Simply add it l
     import myproject
 
 
-    def create_system_graph(**kwargs):
+    def setup(**kwargs):
         load_dotenv()
         return new_graph(myproject, **kwargs)
 
@@ -90,7 +91,7 @@ file does precisely this to include tests as well as dependencies of the views t
 
     import myproject, tests, codoc_views
 
-    def create_system_graph(**kwargs):
+    def setup(**kwargs):
         return (
             new_graph(sample, **kwargs)
             | new_graph(tests, **kwargs)
@@ -116,7 +117,7 @@ django apps (Which is what they name their modules). Replace ``app_one`` and
     from codoc import new_graph
     import os
 
-    def create_system_graph(**kwargs):
+    def setup(**kwargs):
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codoc_api.settings")
         import django
         django.setup()

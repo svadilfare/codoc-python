@@ -49,7 +49,7 @@ called ``codoc_views`` located at the root directory of your project.
 Start by creating a configuration file:
 
 You will also need a basic config file in the same folder, called ``config.py``.
-This file mainly needs a function called ``create_system_graph`` to return a
+This file mainly needs a function called ``setup`` to return a
 graph of the system in question. The function takes ``**kwargs``, to pass along
 any flags. The example below returns a graph containing the ``myproject``
 module, and it's direct dependencies - please replace ``myproject`` with the
@@ -65,7 +65,7 @@ module you want to document:
 
     import myproject
 
-    def create_system_graph(**kwargs):
+    def setup(**kwargs):
         return new_graph(myproject, **kwargs)
 
 .. _`simpleviews`:

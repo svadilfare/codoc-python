@@ -6,6 +6,6 @@ from dotenv import load_dotenv
 import codoc
 
 
-def create_system_graph(**kwargs):
+def setup(**kwargs):
     load_dotenv()
     return new_graph(codoc, **kwargs)
