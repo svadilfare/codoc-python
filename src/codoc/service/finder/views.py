@@ -15,11 +15,11 @@ CodocView = Callable[[Graph], Graph]
 def get_views_in_file(py_file: Path) -> List[CodocView]:
     module = get_module_from_file(py_file)
 
-    views = [
-        value for key, value in inspect.getmembers(module) if is_a_codoc_view(value)
+    return [
+        value
+        for key, value in inspect.getmembers(module)
+        if is_a_codoc_view(value)
     ]
-
-    return views
 
 
 def is_a_codoc_view(obj: object) -> bool:

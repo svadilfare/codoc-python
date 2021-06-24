@@ -21,7 +21,7 @@ def create_graph_of_module(
     strict_mode: bool = True,
 ) -> Graph:
     all_objects = frozenset(recursively_get_all_subobjects_in_object(module))
-    nodes = set(
+    nodes = {
         node
         for obj in all_objects
         for node in {create_node_from_object(obj, external=False)}
@@ -30,19 +30,16 @@ def create_graph_of_module(
             include_external_dependencies=include_external_dependencies,
             strict_mode=strict_mode,
         )
-    )
-    edges = set(
-        Dependency(
+    }
+
+    edges = {Dependency(
             from_node=get_identifier_of_object(obj),
             to_node=dependency.identifier,
-        )
-        for obj in all_objects
-        for dependency in get_dependency_nodes(
-            obj,
-            include_external_dependencies=include_external_dependencies,
-            strict_mode=strict_mode,
-        )
-    )
+        ) for obj in all_objects for dependency in get_dependency_nodes(
+                obj,
+                include_external_dependencies=include_external_dependencies,
+                strict_mode=strict_mode,
+            )}
     return create_bubbled_dependencies(Graph(nodes=nodes, edges=edges))
 
 
@@ -60,12 +57,13 @@ def _is_graph(graph: Graph) -> bool:
 
 def _assert_does_all_parents_exist(graph: Graph) -> bool:
     node_identifiers = get_identifiers(graph)
-    parentless_nodes = set(
+    parentless_nodes = {
         (node.identifier, node.parent_identifier)
         for node in graph.nodes
         if node.parent_identifier is not None
         and node.parent_identifier not in node_identifiers
-    )
+    }
+
     assert (
         parentless_nodes == set()
     ), f"The following parents could not be found: {parentless_nodes}"
@@ -77,7 +75,6 @@ def _does_edges_lead_somewhere(graph: Graph) -> bool:
         edge.from_node in node_identifiers and edge.to_node in node_identifiers
         for edge in graph.edges
     )
-    ...
 
 
 def _is_graph_empty(graph: Graph) -> bool:

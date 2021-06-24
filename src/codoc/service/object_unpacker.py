@@ -20,33 +20,29 @@ def recursively_get_all_subobjects_in_object(obj: ObjectType) -> Set[ObjectType]
 def get_all_objects_in_sub_objects(
     obj: ObjectType, sub_objects: Set[ObjectType]
 ) -> Set[ObjectType]:
-    return set(
+    return {
         sub_sub_obj
         for sub_obj in sub_objects
         if is_obj_part_of_module(sub_obj, obj)
         for sub_sub_obj in recursively_get_all_subobjects_in_object(sub_obj)
-    )
+    }
 
 
 def get_relevant_objects_in_object(obj: ObjectType) -> Set[ObjectType]:
-    sub_objects = set(
+    return {
         with_parentclass_attribute(sub_obj, obj)
         for name, sub_obj in _get_subobjects(obj)
         if is_obj_valid_for_return(name, sub_obj, obj)
-    )
-    return sub_objects
+    }
 
 
 def _get_subobjects(obj: ObjectType) -> Set[ObjectType]:
-    for member in inspect.getmembers(obj):
-        yield member
-
+    yield from inspect.getmembers(obj)
     if inspect.ismodule(obj) and hasattr(obj, "__path__"):
-        for sub_module in [
+        yield from [
             _load_module(mod)
             for mod in iter_modules(obj.__path__, prefix=f"{obj.__name__}.")
-        ]:
-            yield sub_module
+        ]
 
 
 def _load_module(mod) -> ObjectType:

@@ -15,16 +15,16 @@ def class_diagram_filter(graph: Graph) -> Graph:
 
     """
     return Graph(
-        edges=set(
+        edges={
             edge
             for edge in graph.edges
             if edge_is_attached_only_to_classes(edge, graph)
-        ),
-        nodes=set(
+        },
+        nodes={
             node_with_non_class_parent(node, graph)
             for node in graph.nodes
             if is_class(node)
-        ),
+        },
     )
 
 

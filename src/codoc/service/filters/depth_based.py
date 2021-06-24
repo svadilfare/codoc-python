@@ -20,9 +20,10 @@ from .types import FilterType
 
 def get_depth_based_filter(depth: int) -> FilterType:
     def depth_based_filter(graph: Graph) -> Graph:
-        nodes = set(
+        nodes = {
             node for node in graph.nodes if get_depth_of_node(node, graph) <= depth
-        )
+        }
+
         return Graph(nodes=nodes, edges=graph.edges)
 
     return depth_based_filter
