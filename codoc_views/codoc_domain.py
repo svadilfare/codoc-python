@@ -23,6 +23,13 @@ def domain_model(graph):
 
 
 @view(
+    label="Domain Model (total content)",
+)
+def domain_model_extra(graph):
+    return filters.get_children_of(codoc.domain.model)(graph)
+
+
+@view(
     label="Domain",
 )
 def domain(graph):

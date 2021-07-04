@@ -185,7 +185,7 @@ class DependencyInspector:
         if self._strict_mode:
             raise error
         else:
-            logger.warning(error)
+            logger.debug(error)
 
     def get_referenced_identifier_names(self) -> Set[str]:
         try:
@@ -246,7 +246,7 @@ def handle_attribute_error_in_object_inspection(
 ) -> Optional[ObjectType]:
     # Handle special cases - i.e subprocess having OS specific parts
     if current_object in [subprocess, os]:
-        logger.warning(
+        logger.debug(
             f"Could not fetch `{identifier}` in `{current_object}`. Assuming it was OS specific."
         )
         return current_object
@@ -254,7 +254,7 @@ def handle_attribute_error_in_object_inspection(
     if current_object in [
         obj for name, obj in inspect.getmembers(builtins)
     ] or identifier in [name for name, obj in inspect.getmembers(builtins)]:
-        logger.warning(
+        logger.debug(
             f"Could not fetch `{identifier}` in `{current_object}`. "
             "Assuming that you are shadowing a builtin."
         )

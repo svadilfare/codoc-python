@@ -6,6 +6,13 @@ import codoc
 
 
 @view(
+    label="Total view",
+)
+def total_view(graph):
+    return graph
+
+
+@view(
     label="Module View of the Codoc SDK",
 )
 def view_modules(graph):

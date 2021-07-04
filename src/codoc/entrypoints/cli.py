@@ -11,6 +11,7 @@ import os
 import fire
 import sentry_sdk
 import logging
+import warnings
 
 
 from codoc.service.finder.config import get_config
@@ -47,16 +48,19 @@ class CliHandler:
     """
 
     def __init__(
-        self, path="codoc_views", report_errors=False, silent=False, raise_errors=False
+        self, path="codoc_views", report_errors=False, verbose=False, raise_errors=False
     ):
         self._path = path
 
         self._raise_errors = raise_errors
-        if not silent:
-            logging.basicConfig(
-                format="%(message)s",
-                level=logging.INFO,
-            )
+        level = logging.DEBUG if verbose else logging.INFO
+        if not verbose:
+            warnings.filterwarnings("ignore")
+
+        logging.basicConfig(
+            format="%(message)s",
+            level=level,
+        )
         self._report_errors = report_errors
         if report_errors:
             _setup_sentry()
